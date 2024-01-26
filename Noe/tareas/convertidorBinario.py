@@ -1,4 +1,4 @@
-userNumber = str(input("Enter a number: "))
+userNumber = str(input("Enter a binary number: "))
 listNumber = []
 listaValoresBinarios = []
 for i in userNumber:
