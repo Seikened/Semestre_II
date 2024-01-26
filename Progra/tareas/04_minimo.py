@@ -18,5 +18,5 @@ for i in range(cantidadNumeros):
     lista.append(num)
 
 numMenor = Minimo(lista)
-print(numMenor)
+print(f"El número menor de tu lista {lista} es: {numMenor}")
 
