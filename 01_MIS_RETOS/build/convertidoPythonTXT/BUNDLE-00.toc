@@ -1,3 +1,0 @@
-([('convertidoPythonTXT',
-   '/Users/fernandoleonfranco/Documents/GitHub/Semestre_II/01_MIS_RETOS/dist/convertidoPythonTXT',
-   'EXECUTABLE')],)
