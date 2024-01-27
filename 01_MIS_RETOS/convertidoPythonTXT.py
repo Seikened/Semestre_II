@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QMessageBox,QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QMessageBox, QHBoxLayout
+from PyQt5.QtGui import QIcon  # Corregido aquí
 from PyQt5.QtCore import Qt
 from pathlib import Path
 
@@ -6,6 +7,8 @@ class AppDemo(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Drag & Drop | Convertidor 🔁 & Unificador ⏺️')
+        
+        self.setWindowIcon(QIcon('/Users/fernandoleonfranco/Documents/Imagnes/icone.ico'))
         self.resize(500, 500)  # Hacer la ventana más cuadrada
         self.setAcceptDrops(True)  # Hacer que la ventana acepte arrastrar y soltar
         self.filepaths = []  # Lista para almacenar las rutas de archivos arrastrados
