@@ -25,13 +25,14 @@ def Mediana(listaUser):
         return listaOrdenada[(totalLista//2)]
 
 
-
+# Aquí empieza
 tamLista = int(input("¿De qie tamaño quieres tu lista? "))
 
 listaUser = []
 for i in range(tamLista):
     num = float(input(f"Introduce tu número {i+1}: "))
     listaUser.append(num)
+
 
 mediana = Mediana(listaUser)
 
