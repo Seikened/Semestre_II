@@ -1,35 +1,51 @@
-# Completa el ejercicio aquí
-import math
+
 import numpy as np
+import matplotlib.pyplot as plt
 
 
-sin = math.sin()
-
-#Define la función aquí
-def Calcular_funcion(f,x): #Agregar los parámetros de entrada
+def Calcular_funcion(f, x):
+    """
+    Calcula el valor de una función matemática en un punto dado.
     
+    Parámetros:
+    f -- función matemática a evaluar
+    x -- valor numérico en el que se evaluará la función
+    
+    Retorna:
+    Valor de la función f evaluada en el punto x.
+    """
     return f(x)
 
-def f(x):
-    """
-    Esta función calcula:
-    Parametros de entrada:
-    x: valor del dominio
-    Parametros de salida:
-    x+2: el valor de la función lineal x+ 2
-    """
-    return x + 2
 
 def f(x):
-    return (sin(x)+(2*x))
+    """
+    Calcula la función matemática y = sin(x) + 2x.
+    
+    Parámetros:
+    x -- valor numérico para calcular la función
+    
+    Retorna:
+    Resultado de la función y = sin(x) + 2x.
+    """
+    return np.sin(x) + 2 * x
 
 if __name__ == "__main__":
-    
-    x = list(range(-100,101))
-    valor = Calcular_funcion(f,x)
-    print(valor)
-    #Crear una lista de números para el dominio de la función (valores de X) con valores de -100 a 100
 
-    # Crear una lista de números donde se usa la función usada en el inciso anterior. Los valores de x a ingresar son los creados en el inciso b)
+    dominio_x = list(range(-100, 101))
     
-    # Crea la gráfica aquí
+    valores_y = []
+    for xi in dominio_x:
+        yi = Calcular_funcion(f, xi)
+        valores_y.append(yi)
+    
+    
+    
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111)
+    plt.plot(dominio_x, valores_y, label='y = sin(x) + 2x')
+    plt.title('Gráfica de la función y = sin(x) + 2x')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.grid(True)
+    plt.legend()
+    plt.show()

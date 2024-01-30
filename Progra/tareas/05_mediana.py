@@ -37,3 +37,12 @@ for i in range(tamLista):
 mediana = Mediana(listaUser)
 
 print(f"Tu mediana es {mediana} de tu lista {Ascendiente(listaUser)}")
+
+
+
+
+lista = [1,26,3,9,5]
+
+lista = lista.sort()
+
+lista = sorted(lista)
