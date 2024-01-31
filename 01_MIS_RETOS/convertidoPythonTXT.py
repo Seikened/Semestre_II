@@ -60,7 +60,7 @@ class AppDemo(QWidget):
             filepath = Path(ruta)
             if filepath.is_file():
                 contenido = filepath.read_text(encoding='utf-8')
-                lista_contenidos.append("#" + f"{filepath.name}" + "\n" + contenido + "\n" + "-"*50)
+                lista_contenidos.append("#" + f"{filepath.name}" + "\n" + contenido + "\n" + "#" + "-" * 50)
                 
         contenidos_combinados = "\n".join(lista_contenidos)
         archivo_de_salida = Path('/Users/fernandoleonfranco/Downloads/FERNANDO_TAREAS.txt')
