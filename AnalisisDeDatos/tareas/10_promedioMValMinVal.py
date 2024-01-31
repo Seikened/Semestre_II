@@ -1,18 +1,37 @@
+import random
+
 def Max_min(lista):
-    pass
+    max = -9999999
+    min = 9999999
+    for num in lista:
+        if num >= max:
+            max = num
+        if num <= min:
+            min = num
+    return min,max
+
+
+
 def Promedio(lista):
-    pass
+    sum = 0
+    for num in lista:
+        sum += num
+    return round(sum / (len(lista)),2)
+
+
+
 #-------------#-------------#-------------#-------------#-------------
 
-tam_lista = int(input("De quer tamaño será tu lista de números: "))
+tam_lista = int(input("De que tamaño será tu lista de números: "))
 lista_num = []
 for i in range(tam_lista):
-    lista_num.append(num_user = float(input(f"Dame el no. {i+1}: ")))
+    #input(f"Dame el no. {i+1}: ")
+    lista_num.append( round( random.uniform(1,10) , 2 ) )
 
 prom = Promedio(lista_num)
 min,max = Max_min(lista_num)
 
-print(f"El valor máximo es: {max} y el mínimo es: {min} y el promedio de tu lista es: {prom}")
+print(f"Tu lista es: {lista_num} y el valor máximo es: {max} y el mínimo es: {min} y el promedio de tu lista es: {prom}")
 
 
 
