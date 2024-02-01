@@ -14,4 +14,3 @@ for year in years:
 print(f"Hay {len(leap_years)} años bisiestos desde 1900 hasta 2024 y son:")
 for  leap_year in leap_years:
     print(f"-{leap_year}")
-    
