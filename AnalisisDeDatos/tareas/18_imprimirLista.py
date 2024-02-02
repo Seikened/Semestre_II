@@ -12,5 +12,5 @@ while c < len(lista):
     cuadrado = n**2
     raiz = n**(1/2)
     reciproco = 1/n
-    print(f"{n:<10} | {cuadrado:<10.2f} | {raiz:<14.2f} | {reciproco:<10.2f}")  
+    print(f"{n:<10} | {cuadrado:<10.2f} | {raiz:<14.2f} | {reciproco:<10.2f}")
     c+=1
