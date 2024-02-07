@@ -11,63 +11,53 @@ class Fraccion:
     def __init__(self,numerador = 1 ,denominador = 1):
         self.numerador = numerador
         self.denominador = denominador
-        
-    
-    
+    # SUMA
+    def Suma(self, otra_fraccion):
+        numerador = (self.numerador * otra_fraccion.denominador) + (otra_fraccion.numerador * self.denominador)
+        denominador = self.denominador * otra_fraccion.denominador
+        resultadoSuma = Fraccion(numerador,denominador)
+        return resultadoSuma.Simplifica()
+
+    # PRODUCTO
+    def Producto(self, otra_fraccion):
+        numerador = self.numerador * otra_fraccion.numerador
+        denominador = self.denominador * otra_fraccion.denominador
+        resultadoProducto = Fraccion(numerador,denominador)
+        return resultadoProducto.Simplifica()
+
+    # DIVISIÓN
+    def Division(self, otra_fraccion):
+        numerador = self.numerador * otra_fraccion.denominador
+        denominador = self.denominador * otra_fraccion.numerador
+        resultadoDivision = Fraccion(numerador,denominador)
+        return resultadoDivision.Simplifica()
+
+    # SIMPLIFICAR
+    def Simplifica(self):
+        mcd = self.Mcd(self.numerador,self.denominador)
+        nuevoNumerador = self.numerador// mcd
+        nuevoDenominador = self.denominador// mcd
+        return Fraccion(nuevoNumerador,nuevoDenominador)
+
+    # MÁXIMO COMÚN DIVISOR
+    def Mcd(self,numUno,numDos):
+        while numDos != 0:
+            numUno,numDos = numDos, numUno%numDos
+        return numUno
 
 
-
-# Operaciones de Fracciones 
-
-# FUNCIONES
-# --------------------------------------------------------------------------------------------------------------------------------------------
-def Suma(fraccionUno, fraccionDos):
-    numerador = (fraccionUno.numerador * fraccionDos.denominador) + (fraccionDos.numerador * fraccionUno.denominador)
-    denominador = fraccionUno.denominador * fraccionDos.denominador
-    resultadoSuma = Fraccion(numerador,denominador)
-    return Simplifica(resultadoSuma)
-
-def Producto(fraccionUno, fraccionDos):
-    numerador = fraccionUno.numerador * fraccionDos.numerador
-    denominador = fraccionUno.denominador * fraccionDos.denominador
-    resultadoProducto = Fraccion(numerador,denominador)
-    return Simplifica(resultadoProducto)
-
-def Division(fraccionUno, fraccionDos):
-    numerador = fraccionUno.numerador * fraccionDos.denominador
-    denominador = fraccionUno.denominador * fraccionDos.numerador
-    resultadoDivision = Fraccion(numerador,denominador)
-    return Simplifica(resultadoDivision)
-
-
-def Simplifica(resultadoFraccion):
-    nuevoNumerador = resultadoFraccion.numerador
-    nuevoDenominador =  resultadoFraccion.denominador
-    i = 2
-    while True:
-        if (nuevoNumerador%i == 0 ) and (nuevoDenominador%i == 0):
-            nuevoNumerador = nuevoNumerador//i
-            nuevoDenominador = nuevoDenominador//i
-        else:
-            break
-        i += 1
-    return Fraccion(nuevoNumerador,nuevoDenominador)
-
-def Mcd(numUno,numDos):
-    while numDos != 0:
-        numUno,numDos = numDos, numUno%numDos
-    return numUno
 # --------------------------------------------------------------------------------------------------------------------------------------------
 
 # Código
 f1 = Fraccion(1,2)
 f2 = Fraccion(21,5)
 # Suma
-fr = Suma(f1,f2)
+fr =f1.Suma(f2)
+
 print(f"\n La suma de {f1.numerador}/{f1.denominador} + {f2.numerador}/{f2.denominador} es {fr.numerador}/{fr.denominador} \n")
 # Producto
-fr = Producto(f1,f2)
+fr =f1.Producto(f2)
 print(f"\n El producto de {f1.numerador}/{f1.denominador} * {f2.numerador}/{f2.denominador} es {fr.numerador}/{fr.denominador} \n")
 # Division
-fr = Division(f1,f2)
+fr =  f1.Division(f2)
 print(f"\n La division de {f1.numerador}/{f1.denominador} / {f2.numerador}/{f2.denominador} es {fr.numerador}/{fr.denominador} \n")
