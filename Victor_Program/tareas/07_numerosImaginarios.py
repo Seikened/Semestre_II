@@ -24,6 +24,7 @@ class Complejo():
         return self.Magnitud() < other.Magnitud()
 
 
+#-------------------Pruebas-------------------
 a = Complejo(10,-3)
 b = Complejo(5,20)
 
