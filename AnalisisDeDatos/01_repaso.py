@@ -123,231 +123,309 @@ def Capicua(numero):
     if (primerNumero==quintoNumero) and (segundoNumero==cuartoNumero):
         return f"{numero} ES UNA CAPICUA"
     else:
-        return f"{numero} NO ES UNA CAPICUA"
-
-
-# 13) [FOR] Del listado (10,111,13,15,45,63,25,96) indicar cuantos numeros son impares
-def Impareslistado(listaNumeros):
-    impares = 0
-    for num in listaNumeros:
-        if num%2 !=0:
-            impares+=1
-    return impares
-
-
-#lista = [10, 111, 13, 15, 45, 63, 25, 96]
-
-#print(f"La cantidad de impares son: {Impareslistado(lista)}")
+        print(f"El número {num} no es primo.")
 
 
 
-# 14) [FOR] Preguntar primero cuantos números, posterior solicitar cada uno de esos numeros y mostrar la sumatoria
-def Sumatoria(lista):
-    suma = 0
+#--------------------------------------------------
+#09_cincoDigitos.py
+# Invertir los digitos
+def Invertir(val):
+    nuevoDigito = ""
+    for i in val[::-1]:
+        nuevoDigito += f'{i}'
+    
+    return int(nuevoDigito)
+digito = input("Introduce tu número: ")
+
+digito_invertido = Invertir(digito)
+print(f"Digito introducido {digito}, e invertido es: {digito_invertido}")
+#--------------------------------------------------
+#10_promedioMValMinVal.py
+import random
+
+def Max_min(lista):
+    max = -9999999
+    min = 9999999
     for num in lista:
-        suma += num
-    return suma
-
-#tamanoLista = int(input("Ingresa el tamaño de tu lista: "))
-#listaNumeros = []
-#for i in range(tamanoLista):
-#    listaNumeros.append(int(input(f"Ingresa valor {i+1} para sumarlo después: ")))
-#print(Sumatoria(listaNumeros))
+        if num >= max:
+            max = num
+        if num <= min:
+            min = num
+    return min,max
 
 
 
-# 15) [FOR] Programa que pida 4 calificaciones (0-10), posteriormente calcular el promedio e indicar su clasificacion: 
-# 0.0-5.9: E
-# 6.0-6.9: D
-# 7.0-7.9: C
-# 8.0-8.9: B
-# 9.0-10: A
-
-def CalculadorCalificacionesLetra(calif):
-    
-    if 10>=calif>=9:
-        return "A"
-    elif 8.9>=calif>=8:
-        return "B"
-    elif 7.9>=calif>=7:
-        return "C"
-    elif 6.9>=calif>=6:
-        return "D"
-    elif 5.9>=calif>=0:
-        return "E"
-
-# cantidadCalificaciones = int(input("Cuantas calificaiones vas a meter? "))
-# listaCalificaciones = []
-# for i in range(cantidadCalificaciones):
-#     listaCalificaciones.append(float(input(f"Ingresa tu calificación {i+1} de {cantidadCalificaciones}=> ")))
-# for calif in listaCalificaciones:
-#     print(CalculadorCalificacionesLetra(calif))
-    
+def Promedio(lista):
+    sum = 0
+    for num in lista:
+        sum += num
+    return round(sum / (len(lista)),2)
 
 
 
-# Adicionales
-# 16) Escribe un programa que dado un monto, indique los billetes a entregar: Denominaciones: 500, 200, 100, 50, 20, 10, 5, 1
-def Cajero(monto):
-    # 1516
-    listaDenominaciones = [500,200, 100, 50, 20, 10, 5, 1]
-    listaBilles = []
-    for denominacion in listaDenominaciones:
-        cantidadDenominacion = monto//denominacion
-        monto -= cantidadDenominacion*denominacion
-        listaBilles.append(cantidadDenominacion)
-    return listaBilles
+#-------------#-------------#-------------#-------------#-------------
 
+tam_lista = int(input("De que tamaño será tu lista de números: "))
+lista_num = []
+for i in range(tam_lista):
+    #input(f"Dame el no. {i+1}: ")
+    lista_num.append( round( random.uniform(1,10) , 2 ) )
 
-# 17) Escribe un programa que pida un valor y calcule y muestre su factorial
-def Factorial(numero):
-    sumatoria = 1
-    for num in range(1,numero+1):
-        sumatoria *= num
-    return sumatoria
+prom = Promedio(lista_num)
+min,max = Max_min(lista_num)
+
+print(f"Tu lista es: {lista_num} y el valor máximo es: {max} y el mínimo es: {min} y el promedio de tu lista es: {prom}")
 
 
 
-# 18) Escribe un programa que pida 3 valores e indique cuando son iguales
-
-# valor1 = input("Ingresa el primer valor: ")
-# valor2 = input("Ingresa el segundo valor: ")
-# valor3 = input("Ingresa el tercer valor: ")
-
-# if (valor1 == valor2) and (valor2 == valor3):
-#     print("Todos los valores son iguales.")
-# else:
-#     print("No todos los valores son iguales.")
 
 
-# 19) Escribe un programa que pida un valor en Metros, y muestre su equivalencia en Pies y en Yardas
-def ConversorMedidas(metros):
-    pies = metros * 3.28084
-    yardas =  metros*1.09361
-    return f"{metros} metros son {pies} pies y son {yardas} yardas."
+#--------------------------------------------------
+#11_anoBisiesto.py
+leap_years = []
+years = list(range(1900,2025))
 
+for year in years:
+    if year % 4 == 0:
+        if year % 100 == 0:
+            if year % 400 == 0:
+                # es año bisiesto
+                leap_years.append(year)
+        else:
+            # es año bisiesto
+            leap_years.append(year)
 
-# 20) Escribe un programa que pida un número y diga si es multiplo de 5
+print(f"Hay {len(leap_years)} años bisiestos desde 1900 hasta 2024 y son:")
+for  leap_year in leap_years:
+    print(f"-{leap_year}")
+#--------------------------------------------------
+#12_pares_while.py
+# Ejercicio 1. De la siguiente lista , indicar cuantos números son pares
 
-# numero = int(input("Dame un número: "))
-# if numero%5 ==0:
-#     print("Es multiplo de 5")
-# else:
-#     print("No es multiplo de 5")
-    
+lista = [8,14,22,3,7,28,36,49,52]
 
-# ESTRUCTURAS REPETITIVAS
-listaEstructuras = [8,14,22,3,7,28,36,49,52]
-# 21) Usando FOR y WHILE. De la siguiente lista [8,14,22,3,7,28,36,49,52], indicar cuantos números son pares
-### FOR---------
+c = 0
 pares = 0
-for num in listaEstructuras:
-    if num%2==0:
-        pares +=1
-print(f"Total de pares {pares}")
+while c < len(lista):
+    i = lista[c]
+    if i % 2 == 0:
+        pares += 1
+    c += 1
 
-### WHILE-------
-pares = 0
+print(f"Hay {pares} pares")
+#--------------------------------------------------
+#13_arriba_quince.py
+# Ejercicio 2. De la siguiente lista [8,14,22,3,7,28,36,49,52], indicar cuantos números están por encima de 15
+
+lista = [8,14,22,3,7,28,36,49,52]
+
 c = 0
-while c < len(listaEstructuras):
-    if listaEstructuras[c]%2==0:
-        pares +=1
-    c+=1
-print(f"Total de pares {pares}")
+arribaQuince = 0
+while c < len(lista):
+    i = lista[c]
+    if i > 15:
+        arribaQuince += 1
+    c += 1
 
+print(f"Hay {arribaQuince} números arriba del 15")
+#--------------------------------------------------
+#14_promedio_sumatoria_valores.py
+#Ejercicio 3. De la siguiente lista [8,14,22,3,7,28,36,49,52], indicar la cantidad de valores, la sumatoria y su promedio
+lista = [8,14,22,3,7,28,36,49,52]
 
-
-# 22) Usando FOR y WHILE. De la siguiente lista [8,14,22,3,7,28,36,49,52], indicar cuantos números están por encima de 15
-### FOR---------
-encima = 0
-for num in listaEstructuras:
-    if num>15:
-        encima +=1
-print(f"Total de números encima de 15: {encima}")
-
-### WHILE-------
-encima = 0
 c = 0
-while c < len(listaEstructuras):
-    if listaEstructuras[c]>15:
-        encima +=1
-    c+=1
-print(f"Total de números encima de 15: {encima}")
-
-
-
-# 23) Usando FOR y WHILE. De la siguiente lista [8,14,22,3,7,28,36,49,52], indicar la cantidad de valores, la sumatoria y su promedio
-### FOR---------
 sumatoria = 0
-cantidad = len(listaEstructuras)
-for num in listaEstructuras:
-    sumatoria +=num
-
-promedio = sumatoria/cantidad
-
-print(f"Promedio: {promedio}, Sumatoria:{sumatoria}, Total de elementos: {cantidad}")
-
-### WHILE-------
-sumatoria = 0
-c = 0
-while c < len(listaEstructuras):
-    sumatoria += listaEstructuras[c]
-    c+=1
-promedio = sumatoria/c
-print(f"Promedio: {promedio}, Sumatoria:{sumatoria}, Total de elementos: {c}")
-
-
-
-# 24) Usando FOR y WHILE. Del ejercicio anterior, calcular el La Varianza y Desviación Estándar Poblacional
-### FOR---------
-sumatoria = 0
-cantidad = len(listaEstructuras)
-for num in listaEstructuras:
-    sumatoria +=num
-
-
-promedio = sumatoria/cantidad
-diferencia = 0
-for num in listaEstructuras:
-    diferencia += (num-promedio)**2
-
-desviacion = (diferencia/cantidad)**(1/2)
-varianza = desviacion**2
-print(f"Promedio: {promedio}, Sumatoria:{sumatoria}, Total de elementos: {cantidad}, Desviación estándar:{desviacion}, Varianza:{varianza}")
-
-### WHILE-------
-sumatoria = 0
-c = 0
-while c < len(listaEstructuras):
-    sumatoria += listaEstructuras[c]
-    c+=1
+while c < len(lista):
+    i = lista[c]
+    sumatoria += i
+    c += 1
 
 promedio = sumatoria/c
-diferencia = 0
+print(f"""
+El promedio es {promedio} 
+La cantidad de valores es: {c}
+La sumatoria es {sumatoria}""")
+#--------------------------------------------------
+#15_desvEstandar_varianza.py
+#Ejercicio 3. De la siguiente lista [8,14,22,3,7,28,36,49,52], indicar la cantidad de valores, la sumatoria y su promedio
+lista = [8,14,22,3,7,28,36,49,52]
+
 c = 0
-while c<len(listaEstructuras):
-    diferencia += (listaEstructuras[c]-promedio)**2
+sumatoria = 0
+while c < len(lista):
+    i = lista[c]
+    sumatoria += i
+    c += 1
+promedio = sumatoria/c
+
+# Ejercicio 3.1. Del ejercicio anterior, calcular el La Varianza y Desviación Estándar Poblacional
+
+c = 0
+sumatoriaDesv = 0
+while c < len(lista):
+    sumatoriaDesv = (lista[c]-promedio)**2
     c+=1
-    
-desviacion = (diferencia/cantidad)**(1/2)
-varianza = desviacion**2
 
-print(f"Promedio: {promedio}, Sumatoria:{sumatoria}, Total de elementos: {c}, Desviación estándar:{desviacion}, Varianza:{varianza}")
+varianza = (sumatoriaDesv/c)**(1/2)
+desvEstandar = varianza**2
 
-
-
-# 25) Usando FOR y WHILE. Realiza un programa que pida 2 números enteros, e imprima los números impares que existen entre los 2 valores
-
-numeroUno = 5
-numeroDos = 30
-
-### FOR ----------
-for num in range(numeroUno,numeroDos+1):
-    if num%2 !=0:
-        print(f"Numero impar => {num}")
-### WHILE --------
-c= numeroUno
-while c<= numeroDos:
-    if c%2 !=0:
-        print(f"Numero impar while => {c}")
+print(f"""
+El promedio es {promedio} 
+La cantidad de valores es: {c}
+La sumatoria es {sumatoria}
+La varianza es {varianza}
+La desviación estándar es {desvEstandar}
+""")
+#--------------------------------------------------
+#16_numeroImpares_while.py
+# Ejercicio 4. Realiza un programa que pida 2 números enteros, e imprima los números impares que existen entre los 2 valores
+uno = int(input("Dame tu primer número entero: "))
+dos = int(input("Dame tu segundo número entero: "))
+totalImpares = 0
+c = uno
+while c < dos:
+    if c % 2 != 0:
+        print(f"Número impar es: {c}")
+        totalImpares += 1
     c+=1
+print(f"Termine, hay {totalImpares} de números impares")
+
+
+
+#--------------------------------------------------
+#17_comparacion_lista.py
+# Ejercicio 5. Realizar un programa que permita cargar dos listas de N valores cada una. 
+# Informar con un mensaje cuál de las dos listas tiene un valor acumulado mayor 
+# (mensajes "Lista 1 mayor", "Lista 2 mayor", "Listas iguales")
+
+
+numLenLista1 = int(input("De que tamaño será tu lista 1: "))
+c = 0
+sumatoriaLista1 = 0
+while c < numLenLista1:
+    numUser1 = int(input(f"Cual es tu número {c+1} de tu lista 1: "))
+    sumatoriaLista1 += numUser1
+    c+=1
+
+numLenLista2 = int(input("De que tamaño será tu lista 2: "))
+c = 0
+sumatoriaLista2 = 0
+while c < numLenLista2:
+    numUser2 = int(input(f"Cual es tu número {c+1} de tu lista 2: "))
+    sumatoriaLista2 += numUser2
+    c+=1
+
+if sumatoriaLista1 > sumatoriaLista2:
+    print(f"La lista uno es más grande con un valor total de {sumatoriaLista1}")
+elif sumatoriaLista2 > sumatoriaLista1:
+    print(f"La lista dos es más grande con un valor total de {sumatoriaLista2}")
+else:
+    print("Las dos listas son iguales")
+
+#--------------------------------------------------
+#18_imprimirLista.py
+# Ejercicio 6. De la siguiente lista [16,25,16,99,48,67,37,10,42,56,29,79,34,55], 
+# Mostrar para cada valor: El Valor, su valor al cuadrado, su raíz cuadrada y su recíproco.
+
+lista = [16,25,16,99,48,67,37,10,42,56,29,79,34,55]
+
+print(f"{'VALOR':<10} | {'CUADRADO':<10} | {'RAÍZ CUADRADA':<14} | {'RECÍPROCO':<10}")  
+print("-" * 55)  
+
+c = 0
+while c < len(lista):
+    n = lista[c]
+    cuadrado = n**2
+    raiz = n**(1/2)
+    reciproco = 1/n
+    print(f"{n:<10} | {cuadrado:<10.2f} | {raiz:<14.2f} | {reciproco:<10.2f}")
+    c+=1
+#--------------------------------------------------
+#20_segundos.py
+#Ejercicio No 1. Diseñar una función que calcule la cantidad de segundos en un tiempo dado en horas, minutos y segundos.
+
+def ConversorSegundos(horas,min,seg):
+    segundosTotales = ((horas*60)*60)+(min*60)+seg
+    return segundosTotales
+
+
+tiempo = [int(input("Dame tu tiempo en HORAS: ")),int(input("Dame tu tiempo en MINUTOS: ")),int(input("Dame tu tiempo en SEGUNDOS: "))]
+segundos = ConversorSegundos(*tiempo)
+print(f"Hay {segundos} segundos cuando tienes {tiempo[0]} horas con {tiempo[1]} minutos y con {tiempo[-1]} segundos")
+#--------------------------------------------------
+#21_bisiesto.py
+# Ejercicio No 2. Función que pida como parámetro un año, y que regrese una leyenda que diga si es Bisiesto o no lo es.
+
+ComprobadorBisiesto = lambda year: (year % 4) == 0
+
+preguntaUser = int(input("Dame el año que deseas comprobar: "))
+if ComprobadorBisiesto(preguntaUser):
+    print(f"El año {preguntaUser} si es bisiesto")
+else:
+    print(f"El año {preguntaUser} no es bisiesto")
+
+#--------------------------------------------------
+#22_iva.py
+#Ejercicio No 3. Escribir una función que calcule el total de una factura tras aplicarle el IVA. La función debe recibir la cantidad sin IVA
+
+iva = lambda subTotal: subTotal*1.16
+
+subTotalVenta = int(input("Dame el subtotal de tu venta: "))
+
+total_con_iva = iva(subTotalVenta)
+print(f"El total ya con iva es {total_con_iva}")
+#--------------------------------------------------
+#23_media.py
+#Ejercicio No 4. Escribir una función que reciba una muestra de números en una lista y devuelva su media
+import random
+def Mediana(num_list):
+    total_sum = 0
+    for num in num_list:
+        total_sum += num
+    return total_sum/len(num_list)
+
+
+
+
+lista_numeros = [(random.randint(1,100)) for i in range(10)]
+promedio = Mediana(lista_numeros)
+
+print(f"El promedio de {lista_numeros} \n es: {promedio}")
+#--------------------------------------------------
+#24_suma_cuadrados.py
+#Ejercicio No 5. Escribir una función que reciba una muestra de números en una lista y devuelva la suma de sus cuadrados
+import random
+
+suma_cuadrados = lambda num_list: sum((num**2) for num in num_list) # Suma de la lista
+
+listaNumeros = [random.randint(1,100) for i in range(10)] # Genera lista aleatoria
+
+sumaTotal = suma_cuadrados(listaNumeros)
+print(f"De tu lista {listaNumeros} la suma de todos al cuadrado es {sumaTotal}")
+#--------------------------------------------------
+#25_numeros_multiplos.py
+#Ejercicio No 6. Crea un programa que pida dos números enteros al usuario y diga si alguno de ellos es múltiplo del otro.
+
+multiplo_num = lambda numOne,numTwo: f" {numOne} y {numTwo}  son multiplos" if (numOne%numTwo == 0) or (numTwo%numOne == 0) else f" {numOne} y {numTwo} no son multiplos"
+
+
+numeroUno,numDos = int(input("Dame tu primer numero: ")),int(input("Dame tu segundo número: "))
+print(multiplo_num(numeroUno,numDos))
+#--------------------------------------------------
+#26_menor_en_lista.py
+#Ejercicio No 7. Escribir una función que reciba una nuestra de números en una lista y devuelva el número menor
+
+import random
+
+def menor_lista(lista):
+    menor = 9999999
+    for num in lista:
+        menor = num if num < menor else menor
+    return menor
+
+lista = [random.randint(1,100) for i in range(20)]
+menorLista = menor_lista(lista)
+print(f"El menor de la lista {lista}\n es {menorLista}")
+
+#--------------------------------------------------

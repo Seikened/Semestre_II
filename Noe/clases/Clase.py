@@ -59,8 +59,6 @@ import numpy as np
 
 
 
-
-
 X = list(range(-50,50))
 
 y1 = [(x**4+(2*(x**2))) for x in X]
