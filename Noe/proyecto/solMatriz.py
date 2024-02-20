@@ -101,10 +101,12 @@ def GaussSeidel_m(a, b, x_inicial, error=1e-10, max_iter=1000):
     t = x_inicial.copy()
     for k in range(max_iter):
         x, _ = GaussSeidel(a, b, t, max_iter, error)  # Ajuste aquí para separar los valores devueltos
-        d = np.linalg.norm(np.array(x) - np.array(t), np.inf)
+        d = np.linalg.norm(np.array(x) - np.array(t), np.inf) # Esto es lo que tengo que cambiar
         if d < error:
             return x, k
         t = x.copy()
+        print(f"Esta es la iteración: {k}")
+        
     return x, max_iter  # Devuelve x y el número de iteraciones si no converge dentro del max_iter
 
 
@@ -115,37 +117,37 @@ def GaussSeidel_m(a, b, x_inicial, error=1e-10, max_iter=1000):
 #=========================================== test =========================================
 
 
-A = np.array([[4, -1, 0, 0],
-              [-1, 4, -1, 0],
-              [0, -1, 4, -1],
-              [0, 0, -1, 3]])
+# A = np.array([[4, -1, 0, 0],
+#               [-1, 4, -1, 0],
+#               [0, -1, 4, -1],
+#               [0, 0, -1, 3]])
 
-b = np.array([[15],
-              [10],
-              [10],
-              [10]])
+# b = np.array([[15],
+#               [10],
+#               [10],
+#               [10]])
 
-# Utilizamos descomposición LU para resolver Ax = b
-L, U = descomposicion_lu(A)
-print("L:", L)
-print("U:", U)
+# # Utilizamos descomposición LU para resolver Ax = b
+# L, U = descomposicion_lu(A)
+# print("L:", L)
+# print("U:", U)
 
-# Resolver Lz = b para obtener z
-z = solve_Lz(L, b)
-print("z:", z)
+# # Resolver Lz = b para obtener z
+# z = solve_Lz(L, b)
+# print("z:", z)
 
-# Resolver Ux = z para obtener x
-x = solve_Ux(z, U)
-print("Solución x usando LU:", x)
+# # Resolver Ux = z para obtener x
+# x = solve_Ux(z, U)
+# print("Solución x usando LU:", x)
 
-# Probamos el método de Jacobi
-x_inicial = np.zeros((A.shape[0], 1))
-x_jacobi, iter_jacobi = jacobi_m(A, b[:,0], x_inicial)
-print("Solución x usando Jacobi:", x_jacobi, "en", iter_jacobi, "iteraciones")
+# # Probamos el método de Jacobi
+# x_inicial = np.zeros((A.shape[0], 1))
+# x_jacobi, iter_jacobi = jacobi_m(A, b[:,0], x_inicial)
+# print("Solución x usando Jacobi:", x_jacobi, "en", iter_jacobi, "iteraciones")
 
-# Probamos el método de Gauss-Seidel
-x = GaussSeidel(A, b, x)
+# # Probamos el método de Gauss-Seidel
+# x = GaussSeidel(A, b, x)
 
 
-x_gauss_seidel, iter_gauss_seidel = GaussSeidel_m(A, b[:,0], x_inicial)
-print("Solución x usando Gauss-Seidel:", x_gauss_seidel, "en", iter_gauss_seidel, "iteraciones")
+# x_gauss_seidel, iter_gauss_seidel = GaussSeidel_m(A, b[:,0], x_inicial)
+# print("Solución x usando Gauss-Seidel:", x_gauss_seidel, "en", iter_gauss_seidel, "iteraciones")
