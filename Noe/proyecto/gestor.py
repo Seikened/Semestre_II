@@ -1,5 +1,6 @@
 from funciones import *
-
+import numpy as np
+from numpy.linalg import matrix_rank as rank
 
 #=========================================== MENU =========================================
 
@@ -40,6 +41,38 @@ def Solve(tipoMetodo,A,b):
 
 
 
+def verificar_matriz(A, b):
+    A = np.array(A)
+
+    b = np.array(b).reshape(-1, 1) 
+    
+    m, n = A.shape
+    Ay = np.concatenate((A, b), axis=1)
+    rangoAy = rank(Ay)
+    rangoA = rank(A)
+
+    etiqueta = 0
+    if rangoAy == (rangoA + 1):
+        print('No hay solución')
+        etiqueta = -1
+    elif rangoAy == rangoA:
+        print('Hay almenos una solución')
+        etiqueta = 0
+    if rangoA == n:
+        print('Hay una solución única')
+        etiqueta = 1
+    elif rangoA < n:
+        print('Hay soluciones infinitas')
+        etiqueta = 2
+    return etiqueta
+    
+
+    
+
+
+
+
+
 
 
 #================================== TEST ==================================
@@ -55,6 +88,10 @@ b = [[1],
     [8],
     [-5]]
 
-tipo = "seidel"
+tipo = "jacobi"
 
-Solve(tipo,a,b)
+tiene_sol = verificar_matriz(a, b)
+if tiene_sol == 1:
+    Solve(tipo,a,b)
+else:
+    print("No tiene solución")
