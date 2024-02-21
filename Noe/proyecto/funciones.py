@@ -79,35 +79,30 @@ def jacobi_m(a,b,x,error=1e-10,max_iter=1000):
 #============================  Fin de metodo de Jacobi  ================================
 
 #============================  Metodo de Gauss-Seidel  ================================
-# Aqui se implementa el metodo de Gauss-Seidel para resolver sistemas de ecuaciones lineales
-def GaussSeidel(a, b, x, max_iter=1000, error=1e-10):
+# Aqui se implementa el metodo de Gauss-Seidel para resolver sistemas de ecuaciones  hay 1 partes una donde se resuelve y al otra donde verifica el error
+# Resolver el sistema de ecuaciones
+def GaussSeidel(A, b, x):
     n = len(x)
+    t = x.copy()
+    for i in range(n):
+        s1 = sum(A[i][j] * x[j] for j in range(i))
+        s2 = sum(A[i][j] * t[j] for j in range(i + 1, n))
+        x[i] = (b[i] - s1 - s2) / A[i][i]
+    return x
+
+# Verificar error para convergencia
+def GaussSeidel_m(A, b, x, error=1e-10, max_iter=1000):
+    n = len(x)
+    t = x.copy()
     for k in range(max_iter):
-        x_old = x.copy()
-        for i in range(n):
-            sum1 = sum(a[i][j] * x[j] for j in range(i))
-            sum2 = sum(a[i][j] * x_old[j] for j in range(i + 1, n))
-            x[i] = (b[i] - sum1 - sum2) / a[i][i]
-        if np.linalg.norm(x - x_old, np.inf) < error:
-            return x, k
-    return x, max_iter
-
-
-
-
-# Verificar convergencia
-def GaussSeidel_m(a, b, x_inicial, error=1e-10, max_iter=1000):
-    n = len(x_inicial)
-    t = x_inicial.copy()
-    for k in range(max_iter):
-        x, _ = GaussSeidel(a, b, t, max_iter, error)  # Ajuste aquí para separar los valores devueltos
-        d = np.linalg.norm(np.array(x) - np.array(t), np.inf) # Esto es lo que tengo que cambiar
+        x = GaussSeidel(A, b, x)
+        d = np.linalg.norm(np.array(x) - np.array(t), np.inf)
         if d < error:
             return x, k
-        t = x.copy()
-        print(f"Esta es la iteración: {k}")
-        
-    return x, max_iter  # Devuelve x y el número de iteraciones si no converge dentro del max_iter
+        else:
+            t = x.copy()
+    return [], max_iter
+
 
 
 
@@ -145,9 +140,7 @@ def GaussSeidel_m(a, b, x_inicial, error=1e-10, max_iter=1000):
 # x_jacobi, iter_jacobi = jacobi_m(A, b[:,0], x_inicial)
 # print("Solución x usando Jacobi:", x_jacobi, "en", iter_jacobi, "iteraciones")
 
-# # Probamos el método de Gauss-Seidel
-# x = GaussSeidel(A, b, x)
-
-
-# x_gauss_seidel, iter_gauss_seidel = GaussSeidel_m(A, b[:,0], x_inicial)
+# # Probamos el método de Gauss-Seidel  invocamos la funcion
+# x_inicial = np.zeros((A.shape[0], 1))
+# x_gauss_seidel, iter_gauss_seidel = GaussSeidel_m(A, b, x_inicial)
 # print("Solución x usando Gauss-Seidel:", x_gauss_seidel, "en", iter_gauss_seidel, "iteraciones")
