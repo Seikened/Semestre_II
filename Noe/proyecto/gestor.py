@@ -31,7 +31,10 @@ def Solve_matrix(tipoMetodo,A,b):
 
         b = np.array(b)
         match tipoMetodo:
-            
+            case "gauss":
+                x = Gauss(A,b)
+                print("Solución x usando Gauss de numpy:", x)
+
             # CASO LU
             case "lu":
                 # Utilizamos descomposición LU para resolver Ax = b
@@ -148,7 +151,7 @@ b = [[1],
 
 
 
-tipo = "seidel"
+tipo = "gauss"
 
 
 Solve(tipo,a,b)
