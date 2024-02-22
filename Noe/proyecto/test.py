@@ -16,9 +16,19 @@ b = [[1],
 
 
 
-
-
-tipo = "seidel"
-
-
+#Gauss
+tipo = "gauss"
 Solve(tipo,a,b)
+
+# # LU
+# tipo = "lu"
+# Solve(tipo,a,b)
+
+
+# # Jacobi
+# tipo = "jacobi"
+# Solve(tipo,a,b)
+
+# # Seidel
+# tipo = "seidel"
+# Solve(tipo,a,b)
