@@ -11,14 +11,16 @@ def Solve(tipoMetodo,A,b):
         if userResponse.lower()!="s":
             break
         else:
-            cambiarDatos = input("Quieres cambiar algun dato? (s/n)=> ").lower()
+            cambiarDatos = input("\nQuieres cambiar algun dato? (s/n)=> ").lower()
             if cambiarDatos == "s":
             
                 tipoMetodo = input("Dame tu metodo: ")
-                print(" INGRESA LA MATRIZ\n")
-                A = solicitar_matriz()
-                print(" INGRESA LA EL VECTOR DE TERMINOS INDEPENDIENTES\n")
-                b =  solicitar_matriz()
+                print(" INGRESA LA MATRIZ A\n")
+                A = solicitar_matriz("A")
+                
+                
+                print(" \n INGRESA LA EL VECTOR DE TERMINOS INDEPENDIENTES\n")
+                b =  solicitar_matriz("VECTOR DE TERMINOS INDEPENDIENTES")
 
 
 
@@ -97,7 +99,7 @@ def verificar_matriz(a, b):
 
     etiqueta = 0
     if rangoAy == (rangoA + 1):
-        print('No hay solución')
+        print('No hay solución ❌')
         return False
 
     elif rangoAy == rangoA:
@@ -105,12 +107,13 @@ def verificar_matriz(a, b):
 
 
     if rangoA == n:
-        print('Hay una solución única')
+        print('Hay una solución única ')
 
 
     elif rangoA < n:
-        print('Hay soluciones infinitas')
+        print('Hay soluciones infinitas ∞')
         return False
+
 
     if VerificaDiagonal(a):
         print("Si se puede hacer")
@@ -119,8 +122,8 @@ def verificar_matriz(a, b):
         return False
 
 
-def solicitar_matriz():
-    filas = int(input("INGRESA EL TAMAÑO DE LA MATRIZ: "))
+def solicitar_matriz(texto):
+    filas = int(input(f"INGRESA EL TAMAÑO DE LA MATRIZ {texto}: "))
     matriz = []
     for i in range(filas):
         fila_str = input(f"Ingresa los elementos de la fila {i + 1} separados por espacio y terminando da enter: ")
@@ -138,13 +141,13 @@ def solicitar_matriz():
 
 
 #Uno
-a = [[2, -1, 0],
-    [-1, 3, -1],
-    [0, -1, 2]]
+a = [
+    [1, 2, 3],
+    [2, 4, 6],
+    [1, 2, 3]
+]
 
-b = [[1],
-    [8],
-    [-5]]
+b = [[4], [8], [7]]
 
 
 
