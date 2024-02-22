@@ -1,8 +1,9 @@
 import numpy as np
 
 #============================  Metodo Gauss ================================
-#testtt
-
+def Gauss(A,b):
+    x = np.linalg.solve(A,b)
+    return x 
 
 #============================  Metodo de descomposicion LU  ================================
 # Descomposición LU
