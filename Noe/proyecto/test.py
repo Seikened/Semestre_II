@@ -18,7 +18,9 @@ b = [[1],
 
 #Gauss
 tipo = "gauss"
-Solve(tipo,a,b)
+#Solve(tipo,a,b)
+
+print(help(Solve))
 
 # # LU
 # tipo = "lu"

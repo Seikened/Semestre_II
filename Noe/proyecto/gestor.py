@@ -5,6 +5,24 @@ from numpy.linalg import matrix_rank as rank
 #=========================================== MENU =========================================
 
 def Solve(tipoMetodo,A,b):
+    """
+    
+
+    Parametros
+    ----------
+    tipoMetodo : Cadena de Texto
+        El tipo de metodo por el que se va a resolver la matriz.
+    A : Matriz
+        La matriz A.
+    b : Matriz
+        Vector con las igualdades de las filas.
+
+    Regresa
+    -------
+    La matriz resuelta
+
+    """
+
     while True:
         Solve_matrix(tipoMetodo,A,b)
         userResponse = input("Quieres continuar? (s/n)=> ")
