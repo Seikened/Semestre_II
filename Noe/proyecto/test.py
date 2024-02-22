@@ -2,14 +2,16 @@ from gestor import Solve
 
 
 
-#Uno
-a = [
-    [2, 3, 1],
-    [5, 4, 3],
-    [7, 5, 8]
-]
+# Matriz ejemplo vista en clase para jacobi y seidel
 
-b = [[5], [3], [2]]
+a = [[2, -1, 0],
+    [-1, 3, -1],
+    [0, -1, 2]]
+
+b = [[1],
+    [8],
+    [-5]]
+
 
 
 

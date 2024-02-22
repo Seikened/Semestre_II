@@ -61,7 +61,7 @@ def Solve_matrix(tipoMetodo,A,b):
                 x_gauss_seidel, iter_gauss_seidel = GaussSeidel_m(A, b, x_inicial)
                 print("Solución x usando Gauss-Seidel:", x_gauss_seidel, "en", iter_gauss_seidel, "iteraciones")
     else:
-        print("Ingrese otra matriz")
+        print("Ingrese otra matriz no se puede resolver esta matríz")
 
 
 #=========================================== Verifica diagonal =========================================
@@ -69,6 +69,7 @@ def VerificaDiagonal(A):
     sum = 0
     elemntoSumado = None
     diagonal = None
+    
     for filas in range(len(A)):
         sum = 0
         
@@ -116,10 +117,6 @@ def verificar_matriz(a, b):
     else:
         print('Hay al menos una solución, pero hay algo inusual 🤔')
         return False
-
-
-
-
 
 
 
