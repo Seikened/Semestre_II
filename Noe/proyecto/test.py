@@ -1,27 +1,22 @@
-A = [[2, -1,0],
-    [1, 3, -1],
-    [0, -1, 2]]
+from gestor import Solve
 
 
-def VerificaDiagonal(A):
-    sum = 0
-    elemntoSumado = None
-    diagonal = None
-    for filas in range(len(A)):
-        sum = 0
-        
-        for columnas in range(len(A)):
 
-            if filas != columnas:
-                sum += A[filas][columnas]
-                elemntoSumado = sum
-            else:
-                diagonal = A[filas][columnas]
-        if diagonal > elemntoSumado:
-            continue
-        else:
-            return False
-    return True
+#Uno
+a = [
+    [2, 3, 1],
+    [5, 4, 3],
+    [7, 5, 8]
+]
+
+b = [[5], [3], [2]]
 
 
-print(VerificaDiagonal(A))
+
+
+
+
+tipo = "seidel"
+
+
+Solve(tipo,a,b)

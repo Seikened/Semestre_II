@@ -89,37 +89,39 @@ def VerificaDiagonal(A):
 #=========================================== Verifica matrix =========================================
 def verificar_matriz(a, b):
     A = np.array(a)
-
-    b = np.array(b).reshape(-1, 1) 
+    b = np.array(b).reshape(-1, 1)
     
     m, n = A.shape
     Ay = np.concatenate((A, b), axis=1)
     rangoAy = rank(Ay)
     rangoA = rank(A)
 
-    etiqueta = 0
-    if rangoAy == (rangoA + 1):
-        print('No hay solución ❌')
+    # Comprobación de rango para consistencia del sistema
+    if rangoAy > rangoA:
+        print('El sistema es inconsistente, no hay solución ❌')
         return False
-
     elif rangoAy == rangoA:
-        print('Hay almenos una solución')
-
-
-    if rangoA == n:
-        print('Hay una solución única ')
-
-
-    elif rangoA < n:
-        print('Hay soluciones infinitas ∞')
-        return False
-
-
-    if VerificaDiagonal(a):
-        print("Si se puede hacer")
-        return True
+        if rangoA == n:
+            print('Hay una solución única ✅')
+            # Si adicionalmente quieres verificar la diagonal dominante
+            if VerificaDiagonal(a):
+                print("La matriz es adecuada para métodos iterativos")
+                return True
+            else:
+                print("La matriz NO es adecuada para métodos iterativos")
+                return False
+        else:
+            print('Hay soluciones infinitas ∞')
+            return False
     else:
+        print('Hay al menos una solución, pero hay algo inusual 🤔')
         return False
+
+
+
+
+
+
 
 
 def solicitar_matriz(texto):
@@ -140,24 +142,24 @@ def solicitar_matriz(texto):
 
 
 
-#Uno
-a = [
-    [1, 2, 3],
-    [2, 4, 6],
-    [1, 2, 3]
-]
+# #Uno
+# a = [
+#     [1, 2, 3],
+#     [2, 4, 6],
+#     [1, 2, 3]
+# ]
 
-b = [[4], [8], [7]]
-
-
+# b = [[4], [8], [7]]
 
 
 
 
-tipo = "gauss"
 
 
-Solve(tipo,a,b)
+# tipo = "gauss"
+
+
+# Solve(tipo,a,b)
 
 
 
