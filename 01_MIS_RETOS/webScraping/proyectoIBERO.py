@@ -5,61 +5,57 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
-# Opciones de Chrome
+# Parte 1: Configuración inicial y acceso a la página
 chrome_options = Options()
-# chrome_options.add_argument("--headless")  # Ejecutar Chrome en modo sin cabeza (sin interfaz gráfica)
-
-# Servicio de Chrome
+# chrome_options.add_argument("--headless")  # Descomenta para ejecutar en modo sin cabeza
 chrome_service = Service(executable_path='C:\\Users\\ferna\\OneDrive\\Documentos\\Semestre_II\\01_MIS_RETOS\\webScraping\\chromedriver.exe')
-
-# Inicializar el WebDriver con las opciones y el servicio de Chrome
 driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
-
-# Abre la página de inicio de sesión
 driver.get('https://cursos.iberoleon.mx/online/login/index.php')
 
-# Tus credenciales
+# Parte 2: Inicio de sesión
 username = '192488-7'
-password =                                                                                                                                      'Ftry2131*'
-
-# Encuentra los campos del formulario y los rellena con tus credenciales
+password = 'Ftry2131*'
 driver.find_element(By.NAME, 'username').send_keys(username)
 driver.find_element(By.NAME, 'password').send_keys(password)
-
-# Espera explícita hasta que el botón de inicio de sesión sea clickeable y luego hacer clic en él
-login_button = WebDriverWait(driver, 10).until(
-    EC.element_to_be_clickable((By.ID, "loginbtn"))
-)
+login_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "loginbtn")))
 login_button.click()
 
-#=====================================================================================================
-
-
-# Abre la página que contiene el calendario de eventos
+# Parte 3: Navegación a la página del calendario y selección del evento
 driver.get('https://cursos.iberoleon.mx/online/calendar/view.php')
-
-# Espera hasta que el contenedor de eventos próximos sea visible
-# Esta vez buscamos por clase, que parece ser más constante.
-WebDriverWait(driver, 10).until(
-    EC.visibility_of_element_located((By.CLASS_NAME, "eventlist"))
-)
-
-# Encuentra los eventos próximos
-# Utilizamos un selector de clase que identifique todos los elementos de eventos
+WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "eventlist")))
 eventos_proximos = driver.find_elements(By.CSS_SELECTOR, ".eventlist .card.rounded")
-
-# Itera a través de los eventos para extraer la información
 for evento in eventos_proximos:
-    # Puedes extraer más información aquí si lo necesitas
     titulo_evento = evento.find_element(By.CSS_SELECTOR, '.card-header').text
-    descripcion_evento = evento.find_element(By.CSS_SELECTOR, '.card-body').text
     pie_evento = evento.find_element(By.CSS_SELECTOR, '.card-footer').text
-    print(f"Titulo: {titulo_evento}")
-    print(f"Descripcion: {descripcion_evento}")
-    print(f"Pie: {pie_evento}")
-    print("----------")
+    if "Añadir envío" in pie_evento:
+        enlace_envio = evento.find_element(By.CSS_SELECTOR, 'a.card-link')
+        enlace_envio.click()
+        break  # Salir del bucle después de hacer clic en el enlace
 
+# Parte 4: Subida de archivos
+# Espera hasta que la nueva página cargue completamente o hasta que un elemento específico sea visible
+WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='files_filemanager']")))
+
+# Utiliza JavaScript para encontrar el input de tipo file y hacerlo visible
+input_file_script = """
+var fileInput = document.querySelector('input[name="files_filemanager"]');
+if (fileInput) {
+    fileInput.style.display = 'block';
+    return true;
+}
+return false;
+"""
+# Ejecuta el script
+file_input_visible = driver.execute_script(input_file_script)
+
+if file_input_visible:
+    # Si el script ha hecho el input visible, procede a enviar el archivo
+    file_path = r'C:\Users\ferna\OneDrive\Documentos\Semestre_II\01_MIS_RETOS\webScraping\materias\analisisDatos\Investigación sobre Logaritmos y Antilogaritmos.pdf'
+    driver.find_element(By.NAME, 'files_filemanager').send_keys(file_path)
+else:
+    print("No se pudo hacer visible el input de archivo.")
+
+# Parte 5: Finalización y cierre
+# Agrega aquí cualquier paso adicional que necesites realizar, como guardar el envío
 input("Presiona Enter para cerrar el navegador...")
-
-# Cierra el navegador después de presionar Enter
 driver.quit()
