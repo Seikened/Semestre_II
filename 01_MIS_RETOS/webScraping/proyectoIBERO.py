@@ -55,8 +55,9 @@ driver = configurar_navegador(path_chrome_drive, url)
 #==================================== PARTE 2 ====================================#
 # Parte 2: Inicio de sesión
 username = '192488-7'
-password = input("Introduce tu contraseña: ")
+password =  'Ftry2131*'#input("Introduce tu contraseña: ")
 iniciar_sesion(username, password)
+ruta_archivo = r"C:\Users\ferna\OneDrive\Documentos\Semestre_II\01_MIS_RETOS\webScraping\materias\analisisDatos\Investigación sobre Logaritmos y Antilogaritmos.pdf"
 #==================================== FIN DE PARTE 2 ====================================#
 
 
@@ -75,27 +76,36 @@ print(f"Evento: {titulo_evento}\nDescripción: {descripcion_evento}\nPie: {pie_e
 
 #==================================== PARTE 4 NO FUNCIONA ====================================#
 # # Parte 4: Subida de archivos
-# # Espera hasta que la nueva página cargue completamente o hasta que un elemento específico sea visible
-# WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='files_filemanager']")))
+entregar_tarea(eventos_proximos[0], pie_evento)
 
-# # Utiliza JavaScript para encontrar el input de tipo file y hacerlo visible
-# input_file_script = """
-# var fileInput = document.querySelector('input[name="files_filemanager"]');
-# if (fileInput) {
-#     fileInput.style.display = 'block';
-#     return true;
-# }
-# return false;
-# """
-# # Ejecuta el script
-# file_input_visible = driver.execute_script(input_file_script)
+# 1. Hacer clic en el botón que abre la ventana modal
+boton_agregar = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.XPATH, "//a[@title='Agregar...'][contains(@class, 'btn-secondary')]"))
+)
+boton_agregar.click()
 
-# if file_input_visible:
-#     # Si el script ha hecho el input visible, procede a enviar el archivo
-#     file_path = r'C:\Users\ferna\OneDrive\Documentos\Semestre_II\01_MIS_RETOS\webScraping\materias\analisisDatos\Investigación sobre Logaritmos y Antilogaritmos.pdf'
-#     driver.find_element(By.NAME, 'files_filemanager').send_keys(file_path)
-# else:
-#     print("No se pudo hacer visible el input de archivo.")
+# # 2. Esperar a que la ventana modal sea visible
+# ventana_modal = WebDriverWait(driver, 20).until(
+#     EC.visibility_of_element_located((By.CLASS_NAME, "moodle-dialogue-wrap"))
+# )
+
+# # 3. Enviar la ruta del archivo al input del tipo file
+input_file = WebDriverWait(driver, 10).until(
+    EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='file'][name='repo_upload_file']"))
+)
+input_file.send_keys(ruta_archivo)
+
+# # 4. Hacer clic en el botón para subir el archivo
+boton_subir = driver.find_element(By.CSS_SELECTOR, '.fp-upload-btn.btn-primary.btn')
+boton_subir.click()
+
+boton_guardar_cambios = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.ID, "id_submitbutton"))
+)
+boton_guardar_cambios.click()
+
+
+
 #==================================== FIN DE PARTE 4 ====================================#
 
 
