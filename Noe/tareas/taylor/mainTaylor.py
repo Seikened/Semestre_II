@@ -1,4 +1,4 @@
-from Noe.tareas.taylor.funcionesTaylor import *
+from funcionesTaylor import *
 
 
 
