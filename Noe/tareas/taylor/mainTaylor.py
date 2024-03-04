@@ -2,7 +2,7 @@ from funcionesTaylor import *
 
 
 
-x_values = np.linspace(0, 2 * pi, 100)  # 100 puntos entre 0 y 2*pi
+x_values = np.linspace(0, 2* pi, 100)  # 100 puntos entre 0 y 2*pi
 taylor_values = taylor(x_values, pi, 10) # Devuelvo los valores de y
 cos_values = [f(x) for x in x_values]
 
