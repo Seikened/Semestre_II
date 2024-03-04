@@ -3,11 +3,11 @@ from funcionesTaylor import *
 
 
 x_values = np.linspace(0, 2* pi, 100)  # 100 puntos entre 0 y 2*pi
-taylor_values = taylor(x_values, pi, 10) # Devuelvo los valores de y
+taylor_values = cos(x_values,10) # Devuelvo los valores de y
 cos_values = [f(x) for x in x_values]
 
 error = error_relativo(x_values,taylor_values,cos_values)
-print(error)
+
 
 # Graficamos la aproximación de Taylor y la función exacta
 plt.figure(figsize=(10, 5))
@@ -28,4 +28,3 @@ plt.ylabel('Error relativo')
 plt.legend()
 plt.grid(True)
 plt.show()
-

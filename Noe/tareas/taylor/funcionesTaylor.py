@@ -16,6 +16,14 @@ def f(x):
     """
     return mt.cos(x) 
 
+
+def cos(x,grad0):
+    return taylor(x,0,grad0)
+
+def sin(x,grad0):
+    return taylor(x,3.1416/2,grad0)
+
+
 def taylor(x,x0,grado):
     """Serie de Taylor
 
@@ -27,9 +35,9 @@ def taylor(x,x0,grado):
     Returns:
         lista: valores obtenidos de Taylor
     """
-    y = f(x0)
+    y = 0
     
-    for n in range(1,grado):
+    for n in range(0,grado):
         y += (-1)**n * (x-x0)**(2*n) / mt.factorial(2*n)
     return y
 
