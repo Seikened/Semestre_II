@@ -14,7 +14,17 @@ periodo = lambda interes,valorFuturo, renta : ( mt.log( ( ( valorFuturo * intere
 
 
 #========= 4 TASA DE INTERÉS ==========
+def TasaDeInteresVencidaVF(montoOriginal, renta, periodos):
+    interes = 0.001  
+    monto = renta * ( ( ( (1+interes)**(periodos) ) - 1 ) / ( interes ) )
 
+    while abs(montoOriginal - monto) >= 0.01:
+        interes += 0.0001  
+        monto = renta * ( ( ( (1+interes)**(periodos) ) - 1 ) / ( interes ) ) 
+
+    interes = round(interes, 3)  
+    print(f"Interés de {interes * 100}%")
+    return interes
 
 
 
@@ -29,6 +39,17 @@ rentaAnticipada = lambda interes, periodos, valorActual : (valorActual * interes
 periodoAnticipada = lambda interes, capital, renta : (mt.log(1 - (capital * interes / renta)) / mt.log(1 + interes))
 
 #========= 8 TASA DE INTERÉS ==========
+def TasaDeInteresVencidaVA(montoOriginal, renta, periodos):
+    interes = 0.001  
+    monto = renta * ( ( 1-(1+interes)**(-periodos) ) / interes )
+
+    while abs(montoOriginal - monto) >= 0.01:
+        interes += 0.0001  
+        monto = renta * ( ( 1-(1+interes)**(-periodos) ) / interes )
+
+    interes = round(interes, 3)  
+    print(f"Interés de {interes * 100}%")
+    return interes
 
 
 
@@ -44,7 +65,17 @@ rentaAnticipadaFuturo = lambda capitalFuturo, interes, periodos: capitalFuturo *
 periodoAnticipadaFuturo = lambda monto, renta, interes: (mt.log((monto / renta) + 1) * interes + 1) / mt.log(1 + interes) - 1
 
 #========= 12 TASA DE INTERÉS ==========
+def TasaDeInteresAnticipadaVF(montoOriginal, renta, periodos):
+    interes = 0.001  
+    monto = renta * (1 + (1 - (1 + interes) ** (-periodos + 1)) / interes)
 
+    while abs(montoOriginal - monto) >= 0.01:
+        interes += 0.0001  
+        monto = renta * (1 + (1 - (1 + interes) ** (-periodos + 1)) / interes)
+
+    interes = round(interes, 3)  
+    print(f"Interés de {interes * 100}%")
+    return interes
 
 # ANUALIDAD ANTIICIPADA ================================= VALOR ACTUAL ===================
 #========= 13 VALOR ACTUAL ==========
@@ -56,3 +87,14 @@ rentaAnticipadaActual = lambda montoActual, interes, periodos: montoActual / (((
 #========= 15 NÚMERO DE PERIODOS ==========
 periodoAnticipadaActual = lambda capital, renta, interes: 1 - (mt.log(1 + interes - (capital / renta) * interes) / mt.log(1 + interes))
 #========= 16 TASA DE INTERÉS ==========
+def TasaDeInteresAnticipadaVA(montoOriginal, renta, periodos):
+    interes = 0.001  
+    monto = renta * ((1 + interes) ** (periodos + 1) - 1) / interes - 1
+
+    while abs(montoOriginal - monto) >= 0.01:
+        interes += 0.0001  
+        monto = renta * ((1 + interes) ** (periodos + 1) - 1) / interes - 1
+
+    interes = round(interes, 3)  
+    print(f"Interés de {interes * 100}%")
+    return interes
