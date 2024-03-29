@@ -24,7 +24,7 @@ if __name__ == "__main__":
     derivada = lambda x: 2 - 6*x*np.exp(-x) + 2*np.sin(x)*np.exp(-x/5) - 6*x**2*np.exp(-x) + 6*x**3*np.cos(x)*np.exp(-x/5) - 2*x**2*np.sin(x)*np.exp(-x/5) - 3*x**2*np.exp(-x) + 6*x**2*np.sin(x)*np.exp(-x/5) - 2*x**3*np.cos(x)*np.exp(-x/5) - 2*x**3*np.sin(x)*np.exp(-x/5)/5
     # la derivada es => 2 - 6x*exp(-x) + 2*sin(x)*exp(-x/5) - 6x^2*exp(-x) + 6x^3*cos(x)*exp(-x/5) - 2x^2*sin(x)*exp(-x/5) - 3x^2*exp(-x) + 6x^2*sin(x)*exp(-x/5) - 2x^3*cos(x)*exp(-x/5) - 2x^3*sin(x)*exp(-x/5)/5
     
-    x0 = 6
+    x0 = 9
     tol = .00001
     x = list(range(0,15))
     maxIter = 10000

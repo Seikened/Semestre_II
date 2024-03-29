@@ -46,3 +46,5 @@ rows = cursor.fetchall()
 # Imprime los resultados
 for row in rows:
     print(row)
+    
+cursor.close()

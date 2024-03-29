@@ -20,7 +20,9 @@ def puntoFijo(g, x0, tol, max_iter):
 if __name__ == '__main__':
     # La función g(x) definida según tu imagen
     f = lambda x: 1 + 2*x - 3*x**2*np.exp(-x) + 2*x**3*np.sin(x)*np.exp(-x/5)
-    g_de_x = lambda x: x - np.arcsin((-1 - 2*x + 3*x**2 * np.exp(-x)) / (2*x**3 * np.exp(-x/5)))
+        
+        
+    g_de_x = lambda x: x - f(x)  
 
     x0 = 9  # Punto de inicio
     epsilon = 0.00001
