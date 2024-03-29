@@ -19,18 +19,19 @@ def puntoFijo(g, x0, tol, max_iter):
 
 if __name__ == '__main__':
     # La función g(x) definida según tu imagen
-    g = lambda x: x - np.arcsin((-1 - 2*x + 3*x**2*np.exp(-x)) / (2*x**3*np.exp(-x/5)))
+    f = lambda x: 1 + 2*x - 3*x**2*np.exp(-x) + 2*x**3*np.sin(x)*np.exp(-x/5)
+    g_de_x = lambda x: x - np.arcsin((-1 - 2*x + 3*x**2 * np.exp(-x)) / (2*x**3 * np.exp(-x/5)))
 
-    x0 = 6  # Punto de inicio
+    x0 = 9  # Punto de inicio
     epsilon = 0.00001
     max_iter = 100
 
     # Inicia el método de punto fijo
-    R, i = puntoFijo(g, x0, epsilon, max_iter)
+    R, i = puntoFijo(g_de_x, x0, epsilon, max_iter)
     
     # Imprimir los resultados
     print('Punto fijo: ', R[-1], 'en', i, 'iteraciones')
-    print('g(R)= ', g(R[-1]))
+    print('g(R)= ', g_de_x(R[-1]))
 
     # Graficar la convergencia hacia el punto fijo
     plt.plot(np.arange(1, i+1), R, '-*', label='Puntos fijos')

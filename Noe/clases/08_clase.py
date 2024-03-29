@@ -35,8 +35,8 @@ if __name__ == '__main__':
     # 1+2x-3x^2e^(-x)+2x^3sen(x)e^(-x/5)
     f = lambda x: 1 + 2*x - 3*x**2*np.exp(-x) + 2*x**3*np.sin(x)*np.exp(-x/5)
 
-    a = 6
-    b = 8
+    a = 9
+    b = 10
     epsilon = 0.00001
     max_iter = 100
 

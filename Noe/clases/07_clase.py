@@ -44,8 +44,8 @@ def biseccion(f, a, b, tol, max_iter):
 if __name__ == '__main__':
     
     f = lambda x: 1 + 2*x - 3*x**2*np.exp(-x) + 2*x**3*np.sin(x)*np.exp(-x/5)
-    a = 0.1
-    b = 5
+    a = 9.5027  
+    b = 9.5028
     epsilon = 0.00001
     max_iter = math.ceil(math.log2(np.abs(b-a)/epsilon) - 1)
     print('Max iter: ', max_iter)
