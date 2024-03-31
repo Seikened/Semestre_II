@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import math
 
 
+
+
 def biseccion(f, a, b, tol, max_iter): 
     # aproxima una raiz R, de f en el intervalo (a,b)
     
