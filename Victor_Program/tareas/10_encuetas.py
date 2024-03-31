@@ -24,36 +24,57 @@ class Candidato:
     
     def GetVotos(self):
         return self.__votos
+    
+    def ResetVotos(self):
+        self.__votos = 0 
 
 class Votacion:
     cantidadEjerciciosVotacion = 0
     
     def __init__(self):
-        self.__candidatos = []
+        self.candidatos = []
 
     def AddCandidato(self, candidato):
-        self.__candidatos.append(candidato)
+        self.candidatos.append(candidato)
 
-    def __GeneradorVoto(self):
-        return random.randint(1, len(self.__candidatos))
+    def __GeneradorVoto(self, abstencion_A=50, abstencion_B=47, abstencion_C=53):
+        votoRandom = random.uniform(0,100)
 
-    def IniciarVotacion(self, cantidadVotos):
+        if votoRandom < 10:
+            abstencion = random.uniform(0,100)
+            if abstencion <= abstencion_A:
+                return 1
+        elif votoRandom < 50:
+            abstencion = random.uniform(0,100)
+            if abstencion <= abstencion_B:
+                return 2
+        elif votoRandom <= 100:
+            abstencion = random.uniform(0,100)
+            if abstencion <= abstencion_C:
+                return 3
+        return 0
+
+
+    def IniciarVotacion(self, cantidadVotosEfectivos, abstencion_A=50, abstencion_B=47, abstencion_C=53):
         Votacion.cantidadEjerciciosVotacion += 1
-        for _ in range(cantidadVotos):
-            voto = self.__GeneradorVoto()
-            self.__candidatos[voto - 1].AddVoto()
+        votos_contados = 0
+        while votos_contados < cantidadVotosEfectivos:
+            voto = self.__GeneradorVoto(abstencion_A=abstencion_A, abstencion_B=abstencion_B, abstencion_C=abstencion_C)
+            if voto > 0:
+                self.candidatos[voto - 1].AddVoto()
+                votos_contados += 1
 
     def GanadorActual(self):
-        if not self.__candidatos:
+        if not self.candidatos:
             return "No hay candidatos"
-        return max(self.__candidatos , key = lambda  candidato: candidato.GetVotos())
+        return max(self.candidatos , key = lambda  candidato: candidato.GetVotos())
     
     def VotosTotales(self):
-        return sum(candidato.GetVotos() for candidato in self.__candidatos)
+        return sum(candidato.GetVotos() for candidato in self.candidatos)
 
 
     def __str__(self):
-        candidatos_str = "\n".join([generarEmoji()+" "+str(candidato) for candidato in self.__candidatos])
+        candidatos_str = "\n".join([generarEmoji()+" "+str(candidato) for candidato in self.candidatos])
         ganador = self.GanadorActual()
         ganador_str = str(ganador) if ganador else "Sin votos"
         return f"""
@@ -68,21 +89,31 @@ CANDIDATOS:
 CANDIDATO GANADOR: {ganador_str}
 """
 
-# Iniciamos las elecciones
+
+
+# Iniciar las elecciones y añadir candidatos
 miVotacion = Votacion()
+miVotacion.AddCandidato(Candidato('Fernando Leon'))  # Candidato A
+miVotacion.AddCandidato(Candidato('Claudia Seinbaun'))  # Candidato B
+miVotacion.AddCandidato(Candidato('Mayra Rodriguez'))  # Candidato C
 
-# Creación y añadido de candidatos
-candidato_Fer = Candidato('Fernando Leon')
-candidata_Claudia = Candidato('Claudia Seinbaun')
-candidato_Mayra = Candidato('Mayra Rodriguez')
+def realizarSimulacion(abstencion_B):
+    victorias_B = 0
+    for _ in range(50000):  # Realizar 100 simulaciones
 
-miVotacion.AddCandidato(candidato_Fer)
-miVotacion.AddCandidato(candidata_Claudia)
-miVotacion.AddCandidato(candidato_Mayra)
+        for candidato in miVotacion.candidatos:
+            candidato.ResetVotos()
 
-# Votamos
-miVotacion.IniciarVotacion(1000)
-miVotacion.IniciarVotacion(100)
+        # Realizar votación con la tasa de abstencionismo actual para B
+        miVotacion.IniciarVotacion(1000, abstencion_B=abstencion_B)  # Asumiendo 1000 votos efectivos
+        
+        # Contar victorias de B
+        if miVotacion.candidatos[1].GetVotos() > miVotacion.candidatos[2].GetVotos():
+            victorias_B += 1
 
+    print(f"Con una tasa de abstencionismo del {abstencion_B}% para B, gana en {victorias_B} de las 100 simulaciones.")
+
+# Ejecutar la simulación con una tasa de abstencionismo inicial para B
+realizarSimulacion(47)  # Comenzar con la tasa de abstencionismo del 47% para B
 
 print(miVotacion)
