@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 def puntoFijo(g, x0, tol, max_iter):
     historico = []
@@ -18,12 +19,13 @@ def puntoFijo(g, x0, tol, max_iter):
     return historico, i + 1  # i + 1 para contar la iteración inicial
 
 if __name__ == '__main__':
+    os.system("clear")
     # La función g(x) definida según tu imagen
     f = lambda x: 1 + 2*x - 3*x**2*np.exp(-x) + 2*x**3*np.sin(x)*np.exp(-x/5)
         
         
-    g_de_x = lambda x: x - f(x)  
-
+    g_de_x = lambda x: np.arcsin((-1 - 2*x + 3*x**2 * np.exp(-x)) / (2*x**3 * np.exp(-x/5)))
+    
     x0 = 9  # Punto de inicio
     epsilon = 0.00001
     max_iter = 100
