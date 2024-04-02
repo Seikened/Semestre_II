@@ -99,7 +99,7 @@ miVotacion.AddCandidato(Candidato('Mayra Rodriguez'))  # Candidato C
 
 def realizarSimulacion(abstencion_B):
     victorias_B = 0
-    for _ in range(50000):  # Realizar 100 simulaciones
+    for _ in range(1000):  # Realizar 100 simulaciones
 
         for candidato in miVotacion.candidatos:
             candidato.ResetVotos()
@@ -114,6 +114,6 @@ def realizarSimulacion(abstencion_B):
     print(f"Con una tasa de abstencionismo del {abstencion_B}% para B, gana en {victorias_B} de las 100 simulaciones.")
 
 # Ejecutar la simulación con una tasa de abstencionismo inicial para B
-realizarSimulacion(47)  # Comenzar con la tasa de abstencionismo del 47% para B
+realizarSimulacion(41)  # Comenzar con la tasa de abstencionismo del 47% para B
 
 print(miVotacion)
