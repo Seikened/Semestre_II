@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 import math
 
 class Root:
-    def __init__(self,f=None,a=None,b=None,g=None,df=None,tol=0.00001):
+    def __init__(self,f=None,a=None,b=None,g=None,df=None):
         self.f = f
         self.a = a
         self.b = b
         self.g = g
         self.df = df
-        self.tol = tol
+        self.tol = .00001
         self.max_iter =  100
         self.historico = []
         self.iteraciones = 0
@@ -48,10 +48,11 @@ class Root:
         historico = np.asarray(historico)
         self.historico = historico
         self.iteraciones = i
+        self.raiz = m
         text += ""
 
 
-    def falsa_posicion(self,f, a, b, tol, max_iter):
+    def falsa_posicion(self):
         f = self.f
         a = self.a
         b = self.b
@@ -89,9 +90,10 @@ class Root:
         historico = np.asarray(historico)
         self.iteraciones = i
         self.historico = historico  
+        self.raiz = c
 
 
-    def punto_fijo(self,g, a, tol, max_iter):
+    def punto_fijo(self):
         g = self.g
         a = self.a
         tol = self.tol
@@ -111,6 +113,7 @@ class Root:
         historico = np.asarray(historico)
         self.historico = historico
         self.iteraciones = i + 1
+        self.raiz = x
 
 
     def newton(self):
@@ -137,6 +140,9 @@ class Root:
                     k += 1
                     a = x1
         return "No se encontro la raiz en las iteraciones dadas", k
+    
+    def __str__(self):
+        return f"La raiz es: {self.raiz} y se encontró en {self.iteraciones} iteraciones con el método de Newton lista de historico: {self.historico}"
 
 
 
@@ -144,21 +150,33 @@ class Root:
 
 f = lambda x: 1 + 2*x - 3*x**2*np.exp(-x) + 2*x**3*np.sin(x)*np.exp(-x/5)
 df = lambda x: 2 - 6*x*np.exp(-x) + 2*np.sin(x)*np.exp(-x/5) - 6*x**2*np.exp(-x) + 6*x**3*np.cos(x)*np.exp(-x/5) - 2*x**2*np.sin(x)*np.exp(-x/5) - 3*x**2*np.exp(-x) + 6*x**2*np.sin(x)*np.exp(-x/5) - 2*x**3*np.cos(x)*np.exp(-x/5) - 2*x**3*np.sin(x)*np.exp(-x/5)/5
-a = 9
+a = 18
 b = 19
+g_de_x = lambda x: np.arcsin((-1 - 2*x + 3*x**2 * np.exp(-x)) / (2*x**3 * np.exp(-x/5)))
 
 
-ecuacionNewton = Root(f=f,a=a,df=df)
-
-ecuacionNewton.newton()
-
-iteraciones = ecuacionNewton.iteraciones
-raiz = ecuacionNewton.raiz
-historico = ecuacionNewton.historico
-
-print(f"La raiz es: {raiz} y se encontró en {iteraciones} iteraciones con el método de Newton lista de historico: {historico}")
+ec_biseccion = Root(f=f,a=a,b=b)
+ec_false_position = Root(f=f,a=a,b=b)
+ec_punto_fijo = Root(g=g_de_x,a=a)
+ec_newton = Root(f=f,a=a,df=df)
 
 
+# Resuelvo la ecuaciónes
+ec_biseccion.biseccion()
+ec_false_position.falsa_posicion()
+#ec_punto_fijo.punto_fijo()
+ec_newton.newton()
 
+# print de cada ecuación
+print("Bisección")
 
-
+print(ec_biseccion)
+print("-"*50)
+print("Falsa posición")
+print(ec_false_position)
+print("-"*50)
+print("Punto fijo")
+#print(ec_punto_fijo)
+#print("-"*50)
+print("Newton")
+print(ec_newton)
