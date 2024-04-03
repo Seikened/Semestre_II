@@ -13,7 +13,7 @@ class Root:
         self.max_iter =  100
         self.historico = []
         self.iteraciones = 0
-        self.raices = []
+        self.raiz = 0
 
 
     def biseccion(self): 
@@ -126,16 +126,14 @@ class Root:
         
         k = 0
         while k < maxIter: 
-            # Evaluar si xk es la solición
             if  abs(f(a)) <= tol:
-                # xk es la raiz y el programa termina
-                self.historico.append(a)
+                self.raiz = a
                 self.iteraciones = k
-                self.a = a
+                return ""
             else:
                 if df(a) != 0:
-                    #x(k+1) = xk - f(xk)/f'(xk)
                     x1 = a - f(a)/df(a)
+                    self.historico.append(x1)
                     k += 1
                     a = x1
         return "No se encontro la raiz en las iteraciones dadas", k
@@ -145,22 +143,20 @@ class Root:
 # ------------------------------------------------------------------------------------------------------------
 
 f = lambda x: 1 + 2*x - 3*x**2*np.exp(-x) + 2*x**3*np.sin(x)*np.exp(-x/5)
-
 df = lambda x: 2 - 6*x*np.exp(-x) + 2*np.sin(x)*np.exp(-x/5) - 6*x**2*np.exp(-x) + 6*x**3*np.cos(x)*np.exp(-x/5) - 2*x**2*np.sin(x)*np.exp(-x/5) - 3*x**2*np.exp(-x) + 6*x**2*np.sin(x)*np.exp(-x/5) - 2*x**3*np.cos(x)*np.exp(-x/5) - 2*x**3*np.sin(x)*np.exp(-x/5)/5
-
 a = 9
 b = 19
 
-#ecuacionBiseccion = Root(f=f,b=b,a=a)
-
-#ecuacionBiseccion.biseccion()
 
 ecuacionNewton = Root(f=f,a=a,df=df)
 
 ecuacionNewton.newton()
 
+iteraciones = ecuacionNewton.iteraciones
+raiz = ecuacionNewton.raiz
+historico = ecuacionNewton.historico
 
-print(ecuacionNewton.historico,ecuacionNewton.iteraciones)
+print(f"La raiz es: {raiz} y se encontró en {iteraciones} iteraciones con el método de Newton lista de historico: {historico}")
 
 
 
