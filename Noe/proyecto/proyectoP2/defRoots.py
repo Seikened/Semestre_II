@@ -10,7 +10,7 @@ class Root:
         self.g = g
         self.df = df
         self.tol = tol
-        self.max_iter =  math.ceil(math.log2(np.abs(b-a)/self.tol) - 1)
+        self.max_iter =  100
         self.historico = []
         self.iteraciones = 0
         self.raices = []
@@ -22,6 +22,7 @@ class Root:
         f = self.f
         tol = self.tol
         max_iter = self.max_iter
+        text = ""
         
         # Validar que los valores de a, b y f no sean nulos
         if a is None or b is None or f is None:
@@ -47,6 +48,7 @@ class Root:
         historico = np.asarray(historico)
         self.historico = historico
         self.iteraciones = i
+        text += ""
 
 
     def falsa_posicion(self,f, a, b, tol, max_iter):
@@ -127,8 +129,9 @@ class Root:
             # Evaluar si xk es la solición
             if  abs(f(a)) <= tol:
                 # xk es la raiz y el programa termina
-                
-                return a, k
+                self.historico.append(a)
+                self.iteraciones = k
+                self.a = a
             else:
                 if df(a) != 0:
                     #x(k+1) = xk - f(xk)/f'(xk)
@@ -142,10 +145,24 @@ class Root:
 # ------------------------------------------------------------------------------------------------------------
 
 f = lambda x: 1 + 2*x - 3*x**2*np.exp(-x) + 2*x**3*np.sin(x)*np.exp(-x/5)
-a = 18
+
+df = lambda x: 2 - 6*x*np.exp(-x) + 2*np.sin(x)*np.exp(-x/5) - 6*x**2*np.exp(-x) + 6*x**3*np.cos(x)*np.exp(-x/5) - 2*x**2*np.sin(x)*np.exp(-x/5) - 3*x**2*np.exp(-x) + 6*x**2*np.sin(x)*np.exp(-x/5) - 2*x**3*np.cos(x)*np.exp(-x/5) - 2*x**3*np.sin(x)*np.exp(-x/5)/5
+
+a = 9
 b = 19
 
-ec1 = Root(f=f,b=b,a=a)
+#ecuacionBiseccion = Root(f=f,b=b,a=a)
 
-ec1.biseccion()
-print(ec1.historico,ec1.iteraciones)
+#ecuacionBiseccion.biseccion()
+
+ecuacionNewton = Root(f=f,a=a,df=df)
+
+ecuacionNewton.newton()
+
+
+print(ecuacionNewton.historico,ecuacionNewton.iteraciones)
+
+
+
+
+
