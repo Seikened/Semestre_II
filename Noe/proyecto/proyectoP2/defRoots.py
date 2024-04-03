@@ -43,10 +43,22 @@ class Root:
             
         i = 0
         historico = []
+
+        text += "| {:^10} | {:^10} | {:^10} | {:^10} | {:^10} | {:^10} | {:^10} |\n".format("Iteración", "a", "b", "m", "f(a)", "f(b)", "f(m)")
+        text += "-" * 92 + "\n"
+        
         while i<max_iter:
             m = (a + b)/2
             R = m
             historico.append(R)
+            
+            f_a = f(a)
+            f_b = f(b)
+            f_m = f(m)
+            
+            # Añadir los valores para la iteración actual a la variable text
+            text += "|{:^12}|{:^12.8f}|{:^12.8f}|{:^12.8f}|{:^12.8f}|{:^12.8f}|{:^12.8f}|\n".format(i+1, a, b, m, f_a, f_b, f_m)
+            
             if np.abs(f(m)) < tol:
                 i = i+1
                 break
@@ -54,12 +66,12 @@ class Root:
                 a = m
             else: 
                 b = m
-            i +=1
+                i +=1
         historico = np.asarray(historico)
         self.historico = historico
         self.iteraciones = i
         self.raiz = m
-        text += ""
+        self.text += text
 
 
     def falsa_posicion(self):
@@ -68,6 +80,7 @@ class Root:
         b = self.b
         tol = self.tol
         max_iter = self.max_iter
+        text = ""
         
         
         # Validar que los valores de a, b y f no sean nulos
@@ -80,11 +93,22 @@ class Root:
         
         i = 0
         c = a 
+        text += "| {:^10} | {:^10} | {:^10} | {:^10} | {:^10} | {:^10} | {:^10} |\n".format("Iteración", "a", "b", "c", "f(a)", "f(b)", "f(c)")
+        text += "-" * 92 + "\n"
         while i < max_iter:
             c_old = c  
             c = a - ((f(a) * (b - a)) / (f(b) - f(a)))  
             historico.append(c)
             
+            
+            f_a = f(a)
+            f_b = f(b)
+            f_c = f(c)
+
+            # Añadir los valores para la iteración actual a la variable text
+            text += "|{:^12}|{:^12.8f}|{:^12.8f}|{:^12.8f}|{:^12.8f}|{:^12.8f}|{:^12.8f}|\n".format(i+1, a, b, c, f_a, f_b, f_c)
+
+            i += 1
             if np.abs(f(c)) < tol:  
                 break
                 
@@ -101,6 +125,7 @@ class Root:
         self.iteraciones = i
         self.historico = historico  
         self.raiz = c
+        self.text = text
 
 
     def punto_fijo(self):
@@ -108,22 +133,34 @@ class Root:
         a = self.a
         tol = self.tol
         max_iter = self.max_iter
+        text = ""
+        
         # Validar que los valores de g y a no sean nulos
-        if g  is None or a is None:
+        if g is None or a is None:
             raise Exception("Los valores de g o a no pueden ser nulos, tienes que definirlos")
         
         historico = []
-        x = a  
+        x = a
+        text += "| {:^10} | {:^10} | {:^10} |\n".format("Iteración", "x", "g(x)")
+        text += "-" * 40 + "\n"
+        
         for i in range(max_iter):
-            x_nuevo = g(x)  
+            x_nuevo = g(x)
             historico.append(x_nuevo)
-            if np.abs(x_nuevo - x) < tol:  
+            
+            # Añadir los valores para la iteración actual a la variable text
+            text += "|{:^12}|{:^12.8f}|{:^12.8f}|\n".format(i+1, x, x_nuevo)
+            
+            if np.abs(x_nuevo - x) < tol:
                 break
-            x = x_nuevo  
+            x = x_nuevo
+        
         historico = np.asarray(historico)
         self.historico = historico
         self.iteraciones = i + 1
         self.raiz = x
+        self.text = text
+
 
 
     def newton(self):

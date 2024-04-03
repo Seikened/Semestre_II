@@ -1,6 +1,6 @@
 from defRoots import *
 import os
-os.system("clear")
+
 
 
 
@@ -20,21 +20,11 @@ ec_newton = Root(f=f,a=a,df=df)
 # Resuelvo la ecuaciónes
 ec_biseccion.biseccion()
 ec_false_position.falsa_posicion()
-#ec_punto_fijo.punto_fijo()
+ec_punto_fijo.punto_fijo()
 ec_newton.newton()
 
-# print de cada ecuación
-print("Bisección")
-
-#print(ec_biseccion)
-#print("-"*50)
-#print("Falsa posición")
-#print(ec_false_position)
-#print("-"*50)
-#print("Punto fijo")
-#print(ec_punto_fijo)
-#print("-"*50)
 
 
-print("Newton")
-print(ec_newton)
+
+
+print(ec_punto_fijo)
