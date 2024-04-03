@@ -6,6 +6,20 @@ import math
 
 
 def biseccion(f, a, b, tol, max_iter): 
+    
+    
+    """Esto es una función que calcula la raiz de una función f, en un intervalo (a,b) usando el método de bisección
+
+    Raises:
+        Exception: Si los valores de a, b y f son nulos
+
+    Returns:
+        _type_: historico, i
+    """
+    
+    
+    
+    
     # aproxima una raiz R, de f en el intervalo (a,b)
     
     # combrobar si existe una raiz entre a y b, si no, regresa un error y termina el programa
