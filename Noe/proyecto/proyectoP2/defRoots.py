@@ -1,113 +1,133 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 class Root:
-    def __init__(self,f,a,b=None,g=None,df=None,tol=0.00001,max_iter=100):
+    def __init__(self,f=None,a=None,b=None,g=None,df=None,tol=0.00001):
         self.f = f
         self.a = a
         self.b = b
         self.g = g
         self.df = df
         self.tol = tol
-        self.max_iter = max_iter
+        self.max_iter =  math.ceil(math.log2(np.abs(b-a)/self.tol) - 1)
         self.historico = []
         self.iteraciones = 0
         self.raices = []
 
 
     def biseccion(self): 
-        # aproxima una raiz R, de f en el intervalo (a,b)
+        a = self.a
+        b = self.b
+        f = self.f
+        tol = self.tol
+        max_iter = self.max_iter
         
-        # combrobar si existe una raiz entre a y b, si no, regresa un error y termina el programa
-        # si sign(f(a)) = sign(f(b)): error
+        # Validar que los valores de a, b y f no sean nulos
+        if a is None or b is None or f is None:
+            raise Exception("Los valores de a, b o f no pueden ser nulos, tienes que definirlos")
+
         if np.sign(f(a)) == np.sign(f(b)):
             raise Exception("Los escalares a y b, no contienen una raiz")
             
-        # iniciamos las iteraciones
         i = 0
         historico = []
         while i<max_iter:
-            # obtener el punto medio
-            # m = (a+b)/2
             m = (a + b)/2
             R = m
             historico.append(R)
-        
-            # verificamos si se cumple el criterio de paro
-            # terminamos el ciclo
             if np.abs(f(m)) < tol:
                 i = i+1
                 break
-            elif np.sign(f(a)) == np.sign(f(m)): # caso donde m es una mejora de a
+            elif np.sign(f(a)) == np.sign(f(m)): 
                 a = m
-            else: #elif np.sign(f(b)) == np.sign(f(m)): # caso donde m es una mejora de b
+            else: 
                 b = m
-
-            # incrementamos las iteraciones
             i +=1
-            
         historico = np.asarray(historico)
-        return historico, i
+        self.historico = historico
+        self.iteraciones = i
 
 
-
-
-    def falsa_posicion(f, a, b, tol, max_iter):
+    def falsa_posicion(self,f, a, b, tol, max_iter):
+        f = self.f
+        a = self.a
+        b = self.b
+        tol = self.tol
+        max_iter = self.max_iter
+        
+        
+        # Validar que los valores de a, b y f no sean nulos
+        if f  is None or a is None or b is None:
+            raise Exception("Los escalares a y b no contienen una raíz entre ellos.")
+        historico = []
+        
         if np.sign(f(a)) == np.sign(f(b)):
             raise Exception("Los escalares a y b no contienen una raíz entre ellos.")
-
-        historico = []
+        
         i = 0
-        c = a  # Inicializar c para que tenga un valor antes del bucle
-
+        c = a 
         while i < max_iter:
-            c_old = c  # Guardar el valor anterior de c para comparar después
-            c = a - ((f(a) * (b - a)) / (f(b) - f(a)))  # Calcular la nueva aproximación de c
+            c_old = c  
+            c = a - ((f(a) * (b - a)) / (f(b) - f(a)))  
             historico.append(c)
-
-            if np.abs(f(c)) < tol:  # Si f(c) es menor que la tolerancia, hemos encontrado una raíz suficientemente buena
+            
+            if np.abs(f(c)) < tol:  
                 break
-
+                
             if np.sign(f(a)) == np.sign(f(c)):
                 a = c
             else:
                 b = c
 
-            if np.abs(c - c_old) < tol:  # También podemos verificar si la diferencia entre las aproximaciones sucesivas es pequeña
+            if np.abs(c - c_old) < tol:  
                 break
-
+        
             i += 1
-
         historico = np.asarray(historico)
-        return historico, i + 1  # i + 1 porque la cuenta comienza en 0
+        self.iteraciones = i
+        self.historico = historico  
 
 
-
-
-
-    def punto_fijo(g, a, tol, max_iter):
+    def punto_fijo(self,g, a, tol, max_iter):
+        g = self.g
+        a = self.a
+        tol = self.tol
+        max_iter = self.max_iter
+        # Validar que los valores de g y a no sean nulos
+        if g  is None or a is None:
+            raise Exception("Los valores de g o a no pueden ser nulos, tienes que definirlos")
+        
         historico = []
-        x = a  # Iniciar con el valor inicial x0
-
+        x = a  
         for i in range(max_iter):
-            x_nuevo = g(x)  # Calcular el nuevo punto usando g(x)
+            x_nuevo = g(x)  
             historico.append(x_nuevo)
-
-            if np.abs(x_nuevo - x) < tol:  # Verificar la condición de parada
+            if np.abs(x_nuevo - x) < tol:  
                 break
-
-            x = x_nuevo  # Actualizar x para la próxima iteración
-
+            x = x_nuevo  
         historico = np.asarray(historico)
-        return historico, i + 1  # i + 1 para contar la iteración inicial
+        self.historico = historico
+        self.iteraciones = i + 1
 
 
-    def newton(a,f,df, tol,maxIter=100):
+    def newton(self):
+        a = self.a
+        f = self.f
+        df = self.df
+        tol = self.tol
+        maxIter = self.max_iter
+        
+        # Validar que  f, a y df no sean nulos
+        if f is None or df is None or a is None:
+            raise Exception("Los valores de f, df o a no pueden ser nulos, tienes que definirlos")
+        
         k = 0
-        while k < maxIter:
+        while k < maxIter: 
             # Evaluar si xk es la solición
             if  abs(f(a)) <= tol:
                 # xk es la raiz y el programa termina
+                
                 return a, k
             else:
                 if df(a) != 0:
@@ -116,3 +136,16 @@ class Root:
                     k += 1
                     a = x1
         return "No se encontro la raiz en las iteraciones dadas", k
+
+
+
+# ------------------------------------------------------------------------------------------------------------
+
+f = lambda x: 1 + 2*x - 3*x**2*np.exp(-x) + 2*x**3*np.sin(x)*np.exp(-x/5)
+a = 18
+b = 19
+
+ec1 = Root(f=f,b=b,a=a)
+
+ec1.biseccion()
+print(ec1.historico,ec1.iteraciones)
