@@ -1,4 +1,5 @@
 class Tiempo:
+    estatica = 2
     def __init__(self, min, seg):
         self.minutos = min
         self.segundos = seg
