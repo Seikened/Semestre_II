@@ -14,7 +14,7 @@ class Juego():
         
         self.cancha = Cancha(x1,y1,x2,y2)
         
-        self.pelotas = [Pelota(Config.canchaAncho//2, Config.canchaAlto//2) for _ in range(30)]
+        self.pelotas = [Pelota(Config.canchaAncho//2, Config.canchaAlto//2) for _ in range(50)]
         
         xRaqueta = x1 + 30
         yRaqueta = Config.canchaAlto/2

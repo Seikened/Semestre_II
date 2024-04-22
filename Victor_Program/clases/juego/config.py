@@ -4,8 +4,8 @@ class Config():
     # Variables de juego
     deltaTiempo = 1/20
     
-    # Pelota (verde pastel
-    pelotaColor=(0,255,0)
+    # Pelota (rosa pastel)
+    pelotaColor=(255,105,180)
     relotaRadio=20
     pelotaVelX=200
     pelotaVelY=180
