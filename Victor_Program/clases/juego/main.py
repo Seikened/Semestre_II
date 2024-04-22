@@ -15,6 +15,7 @@ screen = pygame.display.set_mode(tamano)
 juego1 = Juego()
 
 salir = False
+
 while not salir:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
