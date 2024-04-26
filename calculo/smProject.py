@@ -9,11 +9,9 @@ import matplotlib.animation as animation
 # Limpia la pantalla
 os.system('cls' if os.name == 'nt' else 'clear')
 
-x = sp.symbols('x')  # Define x como símbolo matemático
 
 # Códigos de colores ANSI para el arcoíris
 colores_arcoiris = [31, 33, 32, 36, 34, 35]
-
 def imprimir_arcoiris(texto, ciclos=1):
     texto_con_formato = ""
     for desplazamiento_color in range(len(texto)):
@@ -26,7 +24,7 @@ def imprimir_arcoiris(texto, ciclos=1):
         time.sleep(0.1)
     print()  # Mover a la siguiente línea después de terminar la animación
 
-def animar_sumas_riemann(f, a, b, n, delta_x, metodo):
+def animar_sumas_riemann(f, a, b, n, metodo):
     """
     Crea una animación que muestra la construcción de las sumas de Riemann para una función dada.
 
@@ -41,6 +39,7 @@ def animar_sumas_riemann(f, a, b, n, delta_x, metodo):
     La función plotea la función 'f' y superpone rectángulos que representan la suma de Riemann
     seleccionada, actualizando la vista para cada subintervalo.
     """
+    delta_x = (b - a) / n
     fig, ax = plt.subplots()
     x_vals = np.linspace(a, b, 1000)
     y_vals = f(x_vals)
@@ -64,32 +63,70 @@ def animar_sumas_riemann(f, a, b, n, delta_x, metodo):
     ani = animation.FuncAnimation(fig, animate, frames=n, repeat=False)
     plt.show()
 
+
+
+# Función para calcular el error
+def calcular_error(n, metodo):
+    
+    if metodo == 'izquierda':
+        aproximacion = extremo_izquierdo(f, n, intervalo_a)
+    elif metodo == 'derecha':
+        aproximacion = extremo_derecho(f, n, intervalo_a)
+    error = abs(aproximacion - integral_exacta)
+    return error
+
+# # Función para graficar los errores
+# def graficar_errores():
+#     ns = np.arange(5, 201, 1)  # Desde n=5 hasta n=200
+#     errores_izquierda = [calcular_error(n, 'izquierda') for n in ns]
+#     errores_derecha = [calcular_error(n, 'derecha') for n in ns]
+
+#     plt.figure(figsize=(10, 6))
+#     plt.plot(ns, errores_izquierda, label='Error Suma Izquierda', color='red')
+#     plt.plot(ns, errores_derecha, label='Error Suma Derecha', color='blue')
+#     plt.xlabel('Número de Rectángulos')
+#     plt.ylabel('Error')
+#     plt.title('Error de las Sumas de Riemann en función del número de rectángulos')
+#     plt.legend()
+#     plt.grid(True)
+#     plt.show()
+
+# # Llamamos a la función para graficar los errores
+# graficar_errores()
+
+
 # Imprime un mensaje de bienvenida con estilo arcoíris
 imprimir_arcoiris("Bienvenido al cálculo de Sumas de Riemann")
 
-funcion_usuario = input("Ingrese la función a evaluar en términos de x: ")
-intervalo_a = float(input("Ingrese el intervalo a: "))
-intervalo_b = float(input("Ingrese el intervalo b: "))
-n = int(input("Ingrese el número de subintervalos: "))
-delta_x = (intervalo_b - intervalo_a) / n
-f = sp.lambdify(x, sp.sympify(funcion_usuario))
+x = sp.symbols('x')
 
+# funcionUser = input("Ingrese la función a integrar: ")
+intervalo_a = -1.5      #int(input("Ingrese el límite inferior del intervalo: ")
+intervalo_b = .5        #int(input("Ingrese el límite superior del intervalo: ")
+n =  [20,50,100]  #int(input("Ingrese el número de subintervalos: "))
+
+
+f = lambda x: x**3 - (2*x) + 1   # Agrega "funcionUser" para que el usuario pueda ingresar una función desde la terminal
+integral_exacta = sp.integrate(f(x), (x, intervalo_a, intervalo_b)) # Solo se utiliza para gráficos de errores no para el cálculo de las sumas de Riemann
 # Define las funciones para cada método de Riemann
-def extremo_izquierdo(f, n, delta_x, intervalo_a):
+def extremo_izquierdo(f, n, intervalo_a):
+    delta_x = (intervalo_b - intervalo_a) / n
     sumatoria = 0
     for i in range(1, n+1):
         extremo_izquierdo = intervalo_a + (i - 1) * delta_x
         sumatoria += f(extremo_izquierdo) * delta_x
     return sumatoria
 
-def extremo_derecho(f, n, delta_x, intervalo_a):
+def extremo_derecho(f, n, intervalo_a):
+    delta_x = (intervalo_b - intervalo_a) / n
     sumatoria = 0
     for i in range(1, n+1):
         extremo_derecho = intervalo_a + i * delta_x
         sumatoria += f(extremo_derecho) * delta_x
     return sumatoria
 
-def punto_medio(f, n, delta_x, intervalo_a):
+def punto_medio(f, n, intervalo_a):
+    delta_x = (intervalo_b - intervalo_a) / n
     sumatoria = 0
     for i in range(1, n+1):
         punto_medio = intervalo_a + (i - 0.5) * delta_x
@@ -97,17 +134,19 @@ def punto_medio(f, n, delta_x, intervalo_a):
     return sumatoria
 
 
-# Calcula los resultados para cada método
-resultado_extremo_izq = extremo_izquierdo(f, n, delta_x, intervalo_a)
-resultado_extremo_der = extremo_derecho(f, n, delta_x, intervalo_a)
-resultado_punto_medio = punto_medio(f, n, delta_x, intervalo_a)
+# Calcula los resultados para cada método con cada número de subintervalos
+resultados_extremo_izq = [extremo_izquierdo(f, n_i, intervalo_a) for n_i in n]
+resultados_extremo_der = [extremo_derecho(f, n_i, intervalo_a) for n_i in n]
+resultados_punto_medio = [punto_medio(f, n_i, intervalo_a) for n_i in n]
 
-# Imprime los resultados finales con efecto arcoíris
-imprimir_arcoiris(f"Resultado de la regla del extremo izquierdo: {resultado_extremo_izq}")
-imprimir_arcoiris(f"Resultado de la regla del extremo derecho: {resultado_extremo_der}")
-imprimir_arcoiris(f"Resultado de la regla del punto medio: {resultado_punto_medio}")
 
-# Anima las sumas de Riemann para cada método
-animar_sumas_riemann(f, intervalo_a, intervalo_b, n, delta_x, 'izquierda')
-animar_sumas_riemann(f, intervalo_a, intervalo_b, n, delta_x, 'derecha')
-animar_sumas_riemann(f, intervalo_a, intervalo_b, n, delta_x, 'medio')
+# Imprimir los resultados en la terminal con efecto arcoíris por cada elemento de la lista
+for i in range(len(resultados_extremo_izq)):
+    # Imprime los resultados finales con efecto arcoíris
+    imprimir_arcoiris(f"Resultado de la regla del extremo izquierdo: {resultados_extremo_izq[i]}")
+    imprimir_arcoiris(f"Resultado de la regla del extremo derecho: {resultados_extremo_der[i]}")
+    imprimir_arcoiris(f"Resultado de la regla del punto medio: {resultados_punto_medio[i]}")
+    # Anima las sumas de Riemann para cada método de cada número de subintervalos
+    animar_sumas_riemann(f, intervalo_a, intervalo_b, n[i], 'izquierda')
+    animar_sumas_riemann(f, intervalo_a, intervalo_b, n[i], 'derecha')
+    animar_sumas_riemann(f, intervalo_a, intervalo_b, n[i], 'medio')
