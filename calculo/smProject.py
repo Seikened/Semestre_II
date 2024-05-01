@@ -98,6 +98,7 @@ def calcular_error(n, metodo):
 # Imprime un mensaje de bienvenida con estilo arcoíris
 imprimir_arcoiris("Bienvenido al cálculo de Sumas de Riemann")
 
+
 x = sp.symbols('x')
 
 # funcionUser = input("Ingrese la función a integrar: ")
@@ -134,6 +135,34 @@ def punto_medio(f, n, intervalo_a):
     return sumatoria
 
 
+
+def calcular_error(f, a, b, n, metodo, valor_exacto):
+    if metodo == 'izquierda':
+        aproximacion = extremo_izquierdo(f, n, a)
+    elif metodo == 'derecha':
+        aproximacion = extremo_derecho(f, n, a)
+    elif metodo == 'medio':
+        aproximacion = punto_medio(f, n, a)
+    return abs(aproximacion - valor_exacto)
+
+# Función para graficar los errores
+def graficar_errores(f, a, b, valor_exacto):
+    ns = np.arange(5, 201, 1)  # Desde n=5 hasta n=200
+    errores_izquierda = [calcular_error(f, a, b, n, 'izquierda', valor_exacto) for n in ns]
+    errores_derecha = [calcular_error(f, a, b, n, 'derecha', valor_exacto) for n in ns]
+    errores_medio = [calcular_error(f, a, b, n, 'medio', valor_exacto) for n in ns]
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(ns, errores_izquierda, label='Error Izquierda', color='red')
+    plt.plot(ns, errores_derecha, label='Error Derecha', color='blue')
+    plt.plot(ns, errores_medio, label='Error Punto Medio', color='green')
+    plt.xlabel('Número de Rectángulos')
+    plt.ylabel('Error Absoluto')
+    plt.title('Error de las Sumas de Riemann en función del número de rectángulos')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
 # Calcula los resultados para cada método con cada número de subintervalos
 resultados_extremo_izq = [extremo_izquierdo(f, n_i, intervalo_a) for n_i in n]
 resultados_extremo_der = [extremo_derecho(f, n_i, intervalo_a) for n_i in n]
@@ -143,10 +172,15 @@ resultados_punto_medio = [punto_medio(f, n_i, intervalo_a) for n_i in n]
 # Imprimir los resultados en la terminal con efecto arcoíris por cada elemento de la lista
 for i in range(len(resultados_extremo_izq)):
     # Imprime los resultados finales con efecto arcoíris
+    print(f"Resultados para {n[i]} subintervalos:")
     imprimir_arcoiris(f"Resultado de la regla del extremo izquierdo: {resultados_extremo_izq[i]}")
     imprimir_arcoiris(f"Resultado de la regla del extremo derecho: {resultados_extremo_der[i]}")
     imprimir_arcoiris(f"Resultado de la regla del punto medio: {resultados_punto_medio[i]}")
+    print("-"*50)
     # Anima las sumas de Riemann para cada método de cada número de subintervalos
     animar_sumas_riemann(f, intervalo_a, intervalo_b, n[i], 'izquierda')
     animar_sumas_riemann(f, intervalo_a, intervalo_b, n[i], 'derecha')
     animar_sumas_riemann(f, intervalo_a, intervalo_b, n[i], 'medio')
+
+
+graficar_errores(f, intervalo_a, intervalo_b, integral_exacta)
