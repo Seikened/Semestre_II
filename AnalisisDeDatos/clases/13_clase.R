@@ -2,65 +2,33 @@
 
 setwd("/Users/fernandoleonfranco/app")
 
-datos <- read.csv("iris.csv", header = TRUE, sep = ";",dec = ".")
-datos
-
-
+# Carga de datos
+datos <- read.csv("iris.csv", header = TRUE, sep = ";", dec = ".")
 str(datos)
 
-
-# Cambiar la variable objetivo a factor (Tipo categorico)
-
+# Convertir la variable objetivo a factor
 datos$tipo <- as.factor(datos$tipo)
-str(datos)
 
-dim(datos)
+# Segmentar para entrenamiento y para prueba
+muestra <- sample(1:150, 50)
+ttesting <- datos[muestra, ]
+ttraining <- datos[-muestra, ]
 
-
-# Segmentar para entrenamiento y para testear
-
-muestra <- sample(1:150,50)
-muestra
-
-
-ttesting <- datos[muestra,]
-ttraining <- datos[-muestra,]
-
-
-install.packages("e1071",dependencies = TRUE)
-library(class)
+# Cargar las librerías necesarias
 library(e1071)
 
-modelo <- svm(tipo~.,data=ttraining, kernel = "linear")
-modelo
+# Entrenar el modelo SVM
+modelo <- svm(tipo ~ ., data = ttraining, kernel = "linear")
 
-?svm
-# Prediccion
+# Predecir con el modelo
 prediccion <- predict(modelo, ttesting)
-prediccion
 
-# presiscion global
-# presiscion positiva
-# presiscion negativa
-# falsos positivos
-# falsos negativos
-# asertividad positiva
-# asertividad negativa
-
-
-# Matriz de confusion
+# Matriz de confusión
 matrizDeConfusion <- table(ttesting$tipo, prediccion)
 matrizDeConfusion
 
+# Gráfico de los resultados
+plot(modelo, ttraining, s.largo ~ s.ancho)
 
-# porcentaje de presiscion
-acierto <- sum(diag(matrizDeConfusion))/sum(matrizDeConfusion)
-acierto
-
-# Error
-error <- 1 - acierto
-error
-
-
-#
-
+# También puedes graficar las predicciones realizadas sobre el conjunto de prueba
+plot(modelo, ttesting, p.largo ~ p.ancho)

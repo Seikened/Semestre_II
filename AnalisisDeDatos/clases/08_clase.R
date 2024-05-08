@@ -112,3 +112,8 @@ library(car)
 vif(modelo)
 
 
+# graficamos
+par(mfrow = c(2,2))
+plot(modelo)
+
+

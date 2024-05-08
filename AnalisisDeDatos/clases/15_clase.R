@@ -1,9 +1,9 @@
 ##Metodo de potenciacion
 
 library (ada)
-install.packages("ada", dependencies = TRUE)
+#install.packages("ada", dependencies = TRUE)
 
-setwd("C:/App")
+setwd('/Users/fernandoleonfranco/app/')
 datos <- read.table("MuestraCredito_Completo.csv",
                     sep = ";",
                     dec = ".",

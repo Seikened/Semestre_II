@@ -62,7 +62,7 @@ nuevosDatosCsv
 
 
 
-install.packages("FactoMineR",dependencies=TRUE)
+#install.packages("FactoMineR",dependencies=TRUE)
 
 suppressMessages(library(FactoMineR))
 
