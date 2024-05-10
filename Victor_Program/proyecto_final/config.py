@@ -1,24 +1,11 @@
-# Variables de configuración
+class Config:
+    # Tamaño de la ventana
+    ventanaAncho = 735
+    ventanaAlto = 1033
+    deltaTiempo = 0.05  # 50 ms para simular una velocidad de fotogramas estable
+    pantallaTitulo = "Jardín Zen - Fase 1"
 
-class Config():
-    # Variables de juego
-    deltaTiempo = 1/20
-    
-    # Pelota (rosa pastel)
-    pelotaColor=(255,105,180)
-    relotaRadio=20
-    pelotaVelX=200
-    pelotaVelY=180
-    
-    # Cancha (verde oscuro)
-    chanchaColor=(0,100,0)
-    canchaAlto=600
-    canchaAncho=800
-    
-    # Rqueta (blanca grisacea)
-    raquetaColor=(200,200,200)
-    raquetaAlto= 100
-    raquetaAncho= 20
-    
-    
-    ath = "By Fernando Leon Franco"
+    # Rutas de los recursos
+    imgFolder = "img"
+    spritesFile = "sprites.png"
+    fondo = "fondo.jpeg"

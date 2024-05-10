@@ -9,7 +9,7 @@ font = pygame.font.Font(None, font_size)  # None para usar la fuente predetermin
 text_color = (255, 255, 255)
 
 # Creamos la ventana de juego
-tamano = (Config.canchaAncho, Config.canchaAlto)
+tamano = (Config.ventanaAncho, Config.ventanaAlto)
 deltaTiempo_s = Config.deltaTiempo
 screen = pygame.display.set_mode(tamano)
 juego1 = Juego()
@@ -33,13 +33,11 @@ while not salir:
     juego1.Dibuja(screen)
 
     # Renderiza el texto y colócalo en la pantalla
-    ath = Config.ath
-    text_surface = font.render(ath, True, text_color)
-    screen.blit(text_surface, ((Config.canchaAncho/2) - (font_size * len(ath) / 4), 0))
+
 
     # Actualiza la pantalla
     pygame.display.flip()
     pygame.time.wait(int(deltaTiempo_s * 1000))
 
 pygame.display.quit()
-print("fin del programa")
+print("fin del Juego")
