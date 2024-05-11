@@ -1,7 +1,7 @@
 # Archivo: main.py 
 
-import sys, pygame
-from juegoModulo import *
+import pygame
+from juegoModulo import Juego
 from config import Config
 
 pygame.init()
@@ -14,13 +14,15 @@ text_color = (255, 255, 255)
 tamano = (Config.ventanaAncho, Config.ventanaAlto)
 deltaTiempo_s = Config.deltaTiempo
 screen = pygame.display.set_mode(tamano)
-juego1 = Juego()
+
+# Asegúrate de pasar la pantalla al constructor de Juego
+juego1 = Juego(screen)
 
 salir = False
 
 while not salir:
     eventos = pygame.event.get()
-    for event in pygame.event.get():
+    for event in eventos:
         if event.type == pygame.QUIT:
             salir = True
     # Entrada por teclado
@@ -28,12 +30,12 @@ while not salir:
     if key[pygame.K_ESCAPE]:
         salir = True
     
-    # Aquí recalculamos todas las variables 
+    # Aquí recalculamos todas laNs variables 
     juego1.Recalcula(eventos)
     
     # Aquí redibujamos todos los objetos.
     screen.fill((0, 0, 0))
-    juego1.Dibuja(screen)
+    juego1.Dibuja()  # Asegúrate de que el método Dibuja ya no necesita la pantalla como argumento
 
     # Renderiza el texto y colócalo en la pantalla
 

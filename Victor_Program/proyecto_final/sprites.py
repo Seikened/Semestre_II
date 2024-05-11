@@ -1,5 +1,6 @@
 import os
 import pygame
+import random
 from config import Config
 
 debug = False
@@ -76,8 +77,11 @@ class SpriteArrastrable:
         self.estaArrastrando = False
         self.desplazamientoX = 0
         self.desplazamientoY = 0
+        self.movil = True # Si el objeto se puede mover
 
     def ManejarEventoArrastrable(self, evento):
+        if not self.movil:
+            return
         if evento.type == pygame.MOUSEBUTTONDOWN and self.sprite.get_rect(topleft=self.posicion).collidepoint(evento.pos):
             self.estaArrastrando = True
             self.desplazamientoX = self.posicion[0] - evento.pos[0]
@@ -166,28 +170,29 @@ class Planta(SpriteArrastrable):
         self.maceta = None
         self.idPlanta = Planta.numeroPlantas
         self.edad = 1
+        self.movil = False
         Planta.numeroPlantas += 1
         
         # Para depuración
         depurarSprite(nombreSprite, (x, y, x2, y2), posicion, Config.escala, Config.tamanos[nombreSprite], Planta.numeroPlantas)
 
     def faseDosCrecimiento(self):
-        x,y,x2,y2 = Config.coordenadas['plantaFase2']
-        anchura, altura = Config.tamanos['plantaFase2']
+        self.nombreSprite = 'plantaFase2'
+        x,y,x2,y2 = Config.coordenadas[self.nombreSprite]
+        anchura, altura = Config.tamanos[self.nombreSprite]
         sprite = SpriteSheet(Config.spritesFile).obtenerSprite(x, y, anchura, altura)
         self.sprite = redimensionarSprite(sprite,Config.escala)
-        self.nombreSprite = 'plantaFase2'
         
         # Para depuración
         depurarSprite('plantaFase2', (x, y, x2, y2), Config.posiciones['plantaFase2'], Config.escala, Config.tamanos['plantaFase2'], Planta.numeroPlantas)
     
     
     def faseTresCrecimiento(self):
-        x,y,x2,y2 = Config.coordenadas['plantaFase3']
-        anchura, altura = Config.tamanos['plantaFase3']
+        self.nombreSprite = 'plantaFase3'
+        x,y,x2,y2 = Config.coordenadas[self.nombreSprite]
+        anchura, altura = Config.tamanos[self.nombreSprite]
         sprite = SpriteSheet(Config.spritesFile).obtenerSprite(x, y, anchura, altura)
         self.sprite = redimensionarSprite(sprite,Config.escala)
-        self.nombreSprite = 'plantaFase3'
         
         # Para depuración
         depurarSprite('plantaFase3', (x, y, x2, y2), Config.posiciones['plantaFase3'], Config.escala, Config.tamanos['plantaFase3'], Planta.numeroPlantas)
@@ -203,26 +208,70 @@ class Planta(SpriteArrastrable):
         self.cambiarFaseCrecimiento()
         print(f"La edad de la planta es: {self.edad}")
     
+    
     def Dibujar(self, pantalla):
         return super().Dibujar(pantalla)
 
 
+class Particula:
+    def __init__(self, posicion, pantalla):
+        self.pantalla = pantalla
+        self.posicion = list(posicion)  # Convertir a lista para permitir modificaciones
+        self.tiempoVida = random.randint(20, 50)  # Duración aleatoria para más naturalidad
+        self.velocidad = [random.uniform(-1, 1), random.uniform(-3, -1)]  # Velocidad aleatoria x, y
+        self.color = (0, 154, 255)  # Color azul para el agua
+
+    def actualizar(self):
+        """Actualizar la posición de la partícula y reducir su tiempo de vida."""
+        self.posicion[0] += self.velocidad[0]
+        self.posicion[1] += self.velocidad[1]
+        self.tiempoVida -= 1
+
+    def mostrar(self):
+        """Dibujar la partícula en la pantalla si aún está viva."""
+        if self.tiempoVida > 0:
+            pygame.draw.circle(self.pantalla, self.color, (int(self.posicion[0]), int(self.posicion[1])), 5)
+
 class Regadera(SpriteArrastrable):
-    
-    def __init__(self,nombreSprite= 'regadera'):
-        x,y,x2,y2 = Config.coordenadas[nombreSprite]
+    def __init__(self, pantalla, huerto,nombreSprite='regadera'):
+        x , y, x2, y2 = Config.coordenadas[nombreSprite]
         anchura, altura = Config.tamanos[nombreSprite]
         sprite = SpriteSheet(Config.spritesFile).obtenerSprite(x, y, anchura, altura)
         posicion = Config.posiciones[nombreSprite]
         super().__init__(redimensionarSprite(sprite,Config.escala), posicion)
-        self.nombreSprite = nombreSprite
-        self.contieneAgua = False
-        
-        # Para depuración
-        depurarSprite(nombreSprite, (x, y, x2, y2), posicion, Config.escala, Config.tamanos[nombreSprite], 1)
-    
-    def Dibujar(self, pantalla):
-        return super().Dibujar(pantalla)
+        self.huerto = huerto
+        self.pantalla = pantalla
+        self.particulas = []
+
+    def regarPlanta(self, posicionPlanta,planta):
+        # Método para generar partículas en la posición de la planta
+        for _ in range(10):  # Generar 10 partículas
+            particula = Particula(posicionPlanta, self.pantalla)
+            self.particulas.append(particula)
+        planta.crecer(100)  # Regar la planta y hacerla crecer
+        # Regresamos la regadera a su posición original después de regar
+        self.posicion = Config.posiciones['regadera']
+
+    def actualizarParticulas(self):
+        """Actualizar y mostrar todas las partículas activas."""
+        for particula in self.particulas[:]:
+            if particula.tiempoVida > 0:
+                particula.actualizar()
+                particula.mostrar()
+            else:
+                self.particulas.remove(particula)
+
+    def ManejarEventoArrastrable(self, evento):
+        super().ManejarEventoArrastrable(evento)
+        if evento.type == pygame.MOUSEBUTTONUP:
+            # Verificar si la regadera está sobre alguna planta
+            for maceta in self.huerto.macetas:
+                if maceta.contienePlanta and self.sprite.get_rect(topleft=self.posicion).colliderect(maceta.planta.sprite.get_rect(topleft=maceta.planta.posicion)):
+
+                    # Asegúrate de pasar también el objeto planta
+                    self.regarPlanta((maceta.posicion[0], maceta.posicion[1] - 20), maceta.planta)
+                    break
+
 
 
 
@@ -245,13 +294,17 @@ class Huerto:
                     x = self.base_x + columna * self.espacio_x
                     y = self.base_y + fila * self.espacio_y
                     maceta.posicion = (x, y)
-                    self.espacios[fila][columna] = maceta
                     maceta.enHuerto = True
                     maceta.posicionHuerto = (fila, columna)
+                    maceta.movil = False  # Asegurar que la maceta no se mueva una vez colocada
+                    if maceta.planta:
+                        maceta.planta.movil = False  # También inmovilizar la planta
+                    self.espacios[fila][columna] = maceta
                     self.macetas.append(maceta)
-                    return True  # Esto hace que salga después de colocar una maceta
+                    return True  # Detener después de colocar una maceta para evitar duplicados
         print("No hay espacio disponible en el huerto")
         return False
+
 
     def dibujarHuerto(self, pantalla):
         # Dibuja un fondo de cuadrícula para el huerto
@@ -280,18 +333,19 @@ class Huerto:
 class JardinZenSprites:
     """Clase para gestionar todos los sprites del Jardín Zen."""
 
-    def __init__(self):
+    def __init__(self, pantalla):
+        self.pantalla = pantalla
         self.fondo = Fondo()
         self.huerto = Huerto() # Espacios de 100 píxeles entre macetas
-        self.regadera = Regadera()
+        self.regadera = Regadera(pantalla, self.huerto)
         
         # Inicializar macetas y plantas
         self.inicializarMacetasYPlantas()
 
     def inicializarMacetasYPlantas(self):
-        # Crear y agregar macetas y asocialas con plantas y ambas con el huerto
+        # Crear y agregar macetas y asociarlas con plantas y ambas con el huerto
         multiplicador = 50
-        for fila in range(5):
+        for _ in range(5):
             maceta = Maceta()
             self.huerto.agregarMaceta(maceta)
             planta = Planta()
@@ -300,15 +354,14 @@ class JardinZenSprites:
             planta.crecer(multiplicador)
             multiplicador += 50
 
-
-    def dibujarTodos(self, pantalla):
+    def dibujarTodos(self):
         """Dibuja todos los objetos en la pantalla."""
-        self.fondo.Dibujar(pantalla)
-        self.huerto.dibujarHuerto(pantalla)
-        self.regadera.Dibujar(pantalla)
+        self.fondo.Dibujar(self.pantalla)
+        self.huerto.dibujarHuerto(self.pantalla)
+        self.regadera.Dibujar(self.pantalla)
 
     def manejarEventos(self, eventos):
         """Distribuye eventos a los objetos correspondientes."""
-        for evento in eventos:  # Asegúrate de procesar cada evento individualmente
-            self.huerto.manejarEventosHuerto(eventos)  # Asegúrate que esta llamada sea correcta
-            self.regadera.ManejarEventoArrastrable(evento)  # Ahora pasas el evento individual
+        for evento in eventos:
+            self.huerto.manejarEventosHuerto(eventos)
+            self.regadera.ManejarEventoArrastrable(evento)

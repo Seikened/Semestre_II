@@ -1,17 +1,14 @@
-# Archivo: juegoModulo.py donde se define la clase Juego.
-
+# juegoModulo.py
 from sprites import JardinZenSprites
-from config import Config
-
+import pygame
 
 class Juego():
-    def __init__(self):
-        self.sprites = JardinZenSprites()
+    def __init__(self, pantalla):
+        self.pantalla = pantalla
+        self.sprites = JardinZenSprites(self.pantalla)
     
-    
-    def Recalcula(self,eventos):
+    def Recalcula(self, eventos):
         self.sprites.manejarEventos(eventos)
     
-    
-    def Dibuja(self,screen):
-        self.sprites.dibujarTodos(screen)
+    def Dibuja(self):
+        self.sprites.dibujarTodos()  # Ya no se pasa self.pantalla aquí
