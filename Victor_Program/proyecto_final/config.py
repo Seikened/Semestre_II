@@ -18,6 +18,7 @@ class Config:
     
     # Coordenadas iniciales (x, y) y finales (x2, y2)
     coordenadas = {
+        'fondo': (0, 0, 735, 1033),
         'macetaCafe': (50, 348, 247, 524),
         'macetaNegra': (50, 553, 247, 730),
         'regadera': (1445, 388, 1849, 637),

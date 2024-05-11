@@ -6,23 +6,12 @@ from config import Config
 
 class Juego():
     def __init__(self):
-        
-        # Cargamos los sprites desde el archivo sprites sheet
         self.sprites = JardinZenSprites()
     
     
-    def Recalcula(self):
-        pass
+    def Recalcula(self,eventos):
+        self.sprites.manejarEventos(eventos)
     
     
     def Dibuja(self,screen):
-        posiciones = Config.posiciones
-        # Dibuja todos los objetos en la pantalla
-        objetos = [
-            (self.sprites.fotoFondo, *posiciones['fotoFondo']),
-            (self.sprites.macetaCafe, *posiciones['macetaCafe']),
-            (self.sprites.regadera, *posiciones['regadera']),
-            (self.sprites.plantaFase1, *posiciones['plantaFase1'])
-        ]
-        for objeto, x, y in objetos:
-            JardinZenSprites.dibujarSprite(screen, objeto, x, y)
+        self.sprites.dibujarTodos(screen)

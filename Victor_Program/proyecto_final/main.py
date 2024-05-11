@@ -19,6 +19,7 @@ juego1 = Juego()
 salir = False
 
 while not salir:
+    eventos = pygame.event.get()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             salir = True
@@ -28,7 +29,7 @@ while not salir:
         salir = True
     
     # Aquí recalculamos todas las variables 
-    juego1.Recalcula()
+    juego1.Recalcula(eventos)
     
     # Aquí redibujamos todos los objetos.
     screen.fill((0, 0, 0))
