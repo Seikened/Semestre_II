@@ -53,6 +53,7 @@ class Config:
 
     # Posiciones iniciales en pantalla
     posiciones = {
+        'huerto': (305, 600),
         'fotoFondo': (0, 0),
         'macetaCafe': (322, 615),
         'macetaNegra': (300, 100),

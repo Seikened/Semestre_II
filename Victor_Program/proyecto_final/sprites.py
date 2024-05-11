@@ -2,6 +2,30 @@ import os
 import pygame
 from config import Config
 
+debug = False
+
+def depurarSprite(nombre, coordenadas, posicion, escala, tamanos, numero_objeto):
+    x1, y1, x2, y2 = coordenadas
+    # Colores
+    cyan = "\033[36m"
+    green = "\033[32m"
+    yellow = "\033[33m"
+    magenta = "\033[35m"
+    reset = "\033[0m"
+    
+    
+    
+    if debug == True:
+        print(f"Depurando {nombre}:")
+        print(f"  {cyan}Coordenadas{reset} | x1: {green}{x1}{reset}, y1: {green}{y1}{reset}, x2: {green}{x2}{reset}, y2: {green}{y2}{reset}")
+        print(f"  Posición inicial - {magenta}{posicion}{reset}")
+        print(f"  Escala aplicada - {yellow}{escala}%{reset}")
+        print(f"  Dimensiones después de escalar - Ancho: {yellow}{tamanos[0]}{reset}, Alto: {yellow}{tamanos[1]}{reset}")
+        print(f"  Número de objeto: {magenta}{numero_objeto}{reset}")
+    else:
+        pass
+
+
 
 def redimensionarSprite(sprite, escala):
     """ Redimensiona un sprite según la escala dada """
@@ -11,6 +35,25 @@ def redimensionarSprite(sprite, escala):
     return pygame.transform.scale(sprite, (nuevaAnchura, nuevaAltura))
 
 
+def calcularPosicionX(maceta, planta):
+    # Calcular el centro horizontal de la maceta y de la planta
+    centro_x_maceta = maceta.posicion[0] + maceta.sprite.get_width() / 2
+    centro_x_planta = planta.sprite.get_width() / 2
+    
+    # Ajustar la posición x de la planta para que quede centrada con la maceta
+    nueva_posicion_x = centro_x_maceta - centro_x_planta
+    return nueva_posicion_x
+
+
+def calcularPosicionY(maceta, planta):
+    # Usar centroSprite para el ajuste vertical
+    ajuste_y = Config.centroSprite[maceta.tipoMaceta] - Config.centroSprite[planta.nombreSprite]
+    nueva_posicion_y = maceta.posicion[1] + ajuste_y
+    
+    # Ajustar para que el borde inferior de la planta quede justo sobre el borde superior de la maceta
+    nueva_posicion_y -= planta.sprite.get_height() / 2
+    
+    return nueva_posicion_y
 
 
 class SpriteSheet:
@@ -68,19 +111,23 @@ class Maceta(SpriteArrastrable):
         sprite = SpriteSheet(Config.spritesFile).obtenerSprite(x, y, anchura, altura)
         posicion = Config.posiciones[nombreSprite]
         super().__init__(redimensionarSprite(sprite,Config.escala), posicion)
+        
+        # Asociación con la planta
         self.contienePlanta = False
+        self.planta = None
+        # Asociación con la el huerto
+        self.enHuerto = False
+        self.posicionHuerto = None
+        
+        # Atributos de la maceta
         self.tipoMaceta = 'cafe'
         self.idMaceta = Maceta.numeroMacetas
         Maceta.numeroMacetas += 1
         
         # Para depuración
-        print(f"coordenadas: x1:{x}, y1:{y}, x2:{x2}, y2:{y2}")
-        print(f"nombreSprite: {nombreSprite}")
-        print(f"Possicion: {Config.posiciones[nombreSprite]}")
-        print(f"numeroMacetas: {Maceta.numeroMacetas}")
-        print(f"escala: {Config.escala}")
-        print(f"Tamaño de la imagen: {Config.tamanos[nombreSprite]}")
-        
+        depurarSprite(nombreSprite, (x, y, x2, y2), posicion, Config.escala, Config.tamanos[nombreSprite], Maceta.numeroMacetas)
+    
+    
     def cambiarMacetaNegra(self):
         x,y,x2,y2 = Config.coordenadas['macetaNegra']
         anchura, altura = Config.tamanos['macetaNegra']
@@ -89,13 +136,17 @@ class Maceta(SpriteArrastrable):
         self.tipoMaceta = 'negra'
         
         # Para depuración
-        print(f"coordenadas: x1:{x}, y1:{y}, x2:{x2}, y2:{y2}")
-        print(f"nombreSprite: macetaNegra")
-        print(f"Possicion: {Config.posiciones['macetaNegra']}")
-        print(f"numeroMacetas: {Maceta.numeroMacetas}")
-        print(f"escala: {Config.escala}")
-        print(f"Tamaño de la imagen: {Config.tamanos['macetaNegra']}")
-
+        depurarSprite('macetaNegra', (x, y, x2, y2), Config.posiciones['macetaNegra'], Config.escala, Config.tamanos['macetaNegra'], Maceta.numeroMacetas)
+    
+    def plantarPlanta(self, planta):
+        self.contienePlanta = True
+        self.planta = planta
+        planta.enMaceta = True
+        x, y = self.posicion
+        planta.posicion = (x , y - 10)
+        planta.maceta = self
+        
+    
     def Dibujar(self, pantalla):
         return super().Dibujar(pantalla)
 
@@ -112,16 +163,13 @@ class Planta(SpriteArrastrable):
         super().__init__(redimensionarSprite(sprite,Config.escala), posicion)
         self.nombreSprite = nombreSprite
         self.enMaceta = False
+        self.maceta = None
         self.idPlanta = Planta.numeroPlantas
+        self.edad = 1
         Planta.numeroPlantas += 1
         
         # Para depuración
-        print(f"coordenadas: x1:{x}, y1:{y}, x2:{x2}, y2:{y2}")
-        print(f"nombreSprite: {nombreSprite}")
-        print(f"Possicion: {Config.posiciones[nombreSprite]}")
-        print(f"numeroPlantas: {Planta.numeroPlantas}")
-        print(f"escala: {Config.escala}")
-        print(f"Tamaño de la imagen: {Config.tamanos[nombreSprite]}")
+        depurarSprite(nombreSprite, (x, y, x2, y2), posicion, Config.escala, Config.tamanos[nombreSprite], Planta.numeroPlantas)
 
     def faseDosCrecimiento(self):
         x,y,x2,y2 = Config.coordenadas['plantaFase2']
@@ -131,13 +179,7 @@ class Planta(SpriteArrastrable):
         self.nombreSprite = 'plantaFase2'
         
         # Para depuración
-        print(f"coordenadas: x1:{x}, y1:{y}, x2:{x2}, y2:{y2}")
-        print(f"nombreSprite: plantaFase2")
-        print(f"Possicion: {Config.posiciones['plantaFase2']}")
-        print(f"numeroPlantas: {Planta.numeroPlantas}")
-        print(f"escala: {Config.escala}")
-        print(f"Tamaño de la imagen: {Config.tamanos['plantaFase2']}")
-        
+        depurarSprite('plantaFase2', (x, y, x2, y2), Config.posiciones['plantaFase2'], Config.escala, Config.tamanos['plantaFase2'], Planta.numeroPlantas)
     
     
     def faseTresCrecimiento(self):
@@ -148,12 +190,18 @@ class Planta(SpriteArrastrable):
         self.nombreSprite = 'plantaFase3'
         
         # Para depuración
-        print(f"coordenadas: x1:{x}, y1:{y}, x2:{x2}, y2:{y2}")
-        print(f"nombreSprite: plantaFase3")
-        print(f"Possicion: {Config.posiciones['plantaFase3']}")
-        print(f"numeroPlantas: {Planta.numeroPlantas}")
-        print(f"escala: {Config.escala}")
-        print(f"Tamaño de la imagen: {Config.tamanos['plantaFase3']}")
+        depurarSprite('plantaFase3', (x, y, x2, y2), Config.posiciones['plantaFase3'], Config.escala, Config.tamanos['plantaFase3'], Planta.numeroPlantas)
+    
+    def cambiarFaseCrecimiento(self):
+        if self.edad > 100 and self.edad <= 200:
+            self.faseDosCrecimiento()
+        elif self.edad > 200:
+            self.faseTresCrecimiento()
+    
+    def crecer(self,multiplicador=1):
+        self.edad += multiplicador
+        self.cambiarFaseCrecimiento()
+        print(f"La edad de la planta es: {self.edad}")
     
     def Dibujar(self, pantalla):
         return super().Dibujar(pantalla)
@@ -171,33 +219,96 @@ class Regadera(SpriteArrastrable):
         self.contieneAgua = False
         
         # Para depuración
-        print(f"coordenadas: x1:{x}, y1:{y}, x2:{x2}, y2:{y2}")
-        print(f"nombreSprite: {nombreSprite}")
-        print(f"Possicion: {Config.posiciones[nombreSprite]}")
-        print(f"escala: {Config.escala}")
-        print(f"Tamaño de la imagen: {Config.tamanos[nombreSprite]}")
+        depurarSprite(nombreSprite, (x, y, x2, y2), posicion, Config.escala, Config.tamanos[nombreSprite], 1)
     
     def Dibujar(self, pantalla):
         return super().Dibujar(pantalla)
 
-class JardinZenSprites:
-    """Clase para gestionar todos los sprites del Jarín Zen"""
+
+
+class Huerto:
     def __init__(self):
-            self.fondo = Fondo()
-            self.macetaCafe = Maceta()
-            self.regadera = Regadera()
-            self.plantaFase1 = Planta()
+        x, y = Config.posiciones['huerto']
+        self.filas = 3
+        self.columnas = 3
+        self.espacios = [[None for _ in range(self.columnas)] for _ in range(self.filas)]
+        self.macetas = []
+        self.espacio_x = 75  # Espacio entre columnas
+        self.espacio_y = 75  # Espacio entre filas
+        self.base_x = x  # Coordenada x inicial
+        self.base_y = y  # Coordenada y inicial
+
+    def agregarMaceta(self, maceta):
+        for fila in range(self.filas):
+            for columna in range(self.columnas):
+                if self.espacios[fila][columna] is None:
+                    x = self.base_x + columna * self.espacio_x
+                    y = self.base_y + fila * self.espacio_y
+                    maceta.posicion = (x, y)
+                    self.espacios[fila][columna] = maceta
+                    maceta.enHuerto = True
+                    maceta.posicionHuerto = (fila, columna)
+                    self.macetas.append(maceta)
+                    return True  # Esto hace que salga después de colocar una maceta
+        print("No hay espacio disponible en el huerto")
+        return False
+
+    def dibujarHuerto(self, pantalla):
+        # Dibuja un fondo de cuadrícula para el huerto
+        for fila in range(self.filas):
+            for columna in range(self.columnas):
+                rect = pygame.Rect(self.base_x + columna * self.espacio_x,
+                                   self.base_y + fila * self.espacio_y,
+                                   self.espacio_x, self.espacio_y)
+                pygame.draw.rect(pantalla, (200, 200, 200), rect, 1)
+        # Dibuja las macetas en su posición actual
+        for maceta in self.macetas:
+            maceta.Dibujar(pantalla)
+            if maceta.contienePlanta:
+                maceta.planta.Dibujar(pantalla)
+
+    def manejarEventosHuerto(self, eventos):
+        """Distribuye eventos a las macetas en el huerto."""
+        for evento in eventos:
+            for maceta in self.macetas:
+                maceta.ManejarEventoArrastrable(evento)
+                if maceta.planta:
+                    maceta.planta.ManejarEventoArrastrable(evento)
+
+
+
+class JardinZenSprites:
+    """Clase para gestionar todos los sprites del Jardín Zen."""
+
+    def __init__(self):
+        self.fondo = Fondo()
+        self.huerto = Huerto() # Espacios de 100 píxeles entre macetas
+        self.regadera = Regadera()
+        
+        # Inicializar macetas y plantas
+        self.inicializarMacetasYPlantas()
+
+    def inicializarMacetasYPlantas(self):
+        # Crear y agregar macetas y asocialas con plantas y ambas con el huerto
+        multiplicador = 50
+        for fila in range(5):
+            maceta = Maceta()
+            self.huerto.agregarMaceta(maceta)
+            planta = Planta()
+            maceta.plantarPlanta(planta)
+            maceta.cambiarMacetaNegra()
+            planta.crecer(multiplicador)
+            multiplicador += 50
+
 
     def dibujarTodos(self, pantalla):
-            """Dibuja todos los objetos en la pantalla"""
-            self.fondo.Dibujar(pantalla)
-            self.macetaCafe.Dibujar(pantalla)
-            self.regadera.Dibujar(pantalla)
-            self.plantaFase1.Dibujar(pantalla)
+        """Dibuja todos los objetos en la pantalla."""
+        self.fondo.Dibujar(pantalla)
+        self.huerto.dibujarHuerto(pantalla)
+        self.regadera.Dibujar(pantalla)
 
     def manejarEventos(self, eventos):
-        """Distribuye eventos a los objetos correspondientes"""
-        for evento in eventos:
-            self.macetaCafe.ManejarEventoArrastrable(evento)
-            self.regadera.ManejarEventoArrastrable(evento)
-            self.plantaFase1.ManejarEventoArrastrable(evento)
+        """Distribuye eventos a los objetos correspondientes."""
+        for evento in eventos:  # Asegúrate de procesar cada evento individualmente
+            self.huerto.manejarEventosHuerto(eventos)  # Asegúrate que esta llamada sea correcta
+            self.regadera.ManejarEventoArrastrable(evento)  # Ahora pasas el evento individual
