@@ -1,4 +1,7 @@
+# Archivo: juegoModulo.py donde se define la clase Juego.
+
 from sprites import JardinZenSprites
+from config import Config
 
 
 class Juego():
@@ -13,16 +16,13 @@ class Juego():
     
     
     def Dibuja(self,screen):
+        posiciones = Config.posiciones
         # Dibuja todos los objetos en la pantalla
         objetos = [
-            (self.sprites.fotoFondo, 0, 0),
-            (self.sprites.macetaNegra, 300, 100),
-            (self.sprites.macetaCafe, 100, 100),
-            (self.sprites.regadera, 500, 100),
-            (self.sprites.plantaFase1, 200, 300),
-            (self.sprites.plantaFase2, 400, 300),
-            (self.sprites.plantaFase3, 600, 300)
+            (self.sprites.fotoFondo, *posiciones['fotoFondo']),
+            (self.sprites.macetaCafe, *posiciones['macetaCafe']),
+            (self.sprites.regadera, *posiciones['regadera']),
+            (self.sprites.plantaFase1, *posiciones['plantaFase1'])
         ]
-
         for objeto, x, y in objetos:
-            JardinZenSprites.DibujarSprite(screen, objeto, x, y)
+            JardinZenSprites.dibujarSprite(screen, objeto, x, y)

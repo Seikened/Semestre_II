@@ -115,7 +115,7 @@ def extremo_izquierdo(f, n, intervalo_a):
     sumatoria = 0
     for i in range(1, n+1):
         extremo_izquierdo = intervalo_a + (i - 1) * delta_x
-        sumatoria += f(extremo_izquierdo) * delta_x
+        sumatoria += f(extremo_izquierdo) * delta_xn 
     return sumatoria
 
 def extremo_derecho(f, n, intervalo_a):

@@ -1,3 +1,5 @@
+# Archivo: main.py 
+
 import sys, pygame
 from juegoModulo import *
 from config import Config
