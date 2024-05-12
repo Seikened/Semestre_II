@@ -4,9 +4,11 @@ class Config:
     # Tamaño de la ventana
     ventanaAncho = 735
     ventanaAlto = 1033
-    deltaTiempo = 0.05  # 50 ms para simular una velocidad de fotogramas estable
+    deltaTiempo = 0.0167  # Este valor es para 60 FPS
     pantallaTitulo = "Jardín Zen - Fase 1"
     
+    # Potencia de riego
+    potenciaRiego = 10
     
 
     # Rutas de los recursos

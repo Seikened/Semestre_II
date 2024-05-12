@@ -8,7 +8,9 @@ class Juego():
         self.sprites = JardinZenSprites(self.pantalla)
     
     def Recalcula(self, eventos):
+        # Actualiza el manejo de eventos de todos los sprites
         self.sprites.manejarEventos(eventos)
     
     def Dibuja(self):
-        self.sprites.dibujarTodos()  # Ya no se pasa self.pantalla aquí
+        # Dibuja todos los elementos gráficos del juego
+        self.sprites.dibujarTodos()

@@ -42,7 +42,7 @@ while not salir:
 
     # Actualiza la pantalla
     pygame.display.flip()
-    pygame.time.wait(int(deltaTiempo_s * 1000))
+    pygame.time.wait(int(deltaTiempo_s * 1000)) # Espera el tiempo necesario para 60 FPS
 
 pygame.display.quit()
 print("fin del Juego")

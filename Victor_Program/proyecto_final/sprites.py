@@ -213,24 +213,35 @@ class Planta(SpriteArrastrable):
         return super().Dibujar(pantalla)
 
 
+
 class Particula:
     def __init__(self, posicion, pantalla):
-        self.pantalla = pantalla
-        self.posicion = list(posicion)  # Convertir a lista para permitir modificaciones
-        self.tiempoVida = random.randint(20, 50)  # Duración aleatoria para más naturalidad
-        self.velocidad = [random.uniform(-1, 1), random.uniform(-3, -1)]  # Velocidad aleatoria x, y
-        self.color = (0, 154, 255)  # Color azul para el agua
+            self.pantalla = pantalla
+            self.posicion = list(posicion)
+            self.tiempoVida = 30  # Reducido para que las partículas desaparezcan más rápido
+            # Inicialización de la velocidad con una componente vertical hacia arriba
+            self.velocidad = [random.uniform(-2, 2), random.uniform(-1, -0.1)]
+            self.gravedad = 0.05  # Aceleración debido a la gravedad
+            self.tamano = (2, 2)  # Tamaño de la partícula
+
 
     def actualizar(self):
-        """Actualizar la posición de la partícula y reducir su tiempo de vida."""
-        self.posicion[0] += self.velocidad[0]
-        self.posicion[1] += self.velocidad[1]
-        self.tiempoVida -= 1
+        """Actualiza la posición de la partícula, aplica gravedad y reduce su tiempo de vida."""
+        if self.tiempoVida > 0:
+            self.velocidad[1] += self.gravedad  # Aplica gravedad incrementando la velocidad en y
+            self.posicion[0] += self.velocidad[0]
+            self.posicion[1] += self.velocidad[1]
+            self.tiempoVida -= 1
+            self.mostrar()
+        else:
+            return False  # Indica que debe ser eliminada
+        return True
 
     def mostrar(self):
-        """Dibujar la partícula en la pantalla si aún está viva."""
-        if self.tiempoVida > 0:
-            pygame.draw.circle(self.pantalla, self.color, (int(self.posicion[0]), int(self.posicion[1])), 5)
+            """Dibuja la partícula en la pantalla como un pequeño rectángulo (píxel)."""
+            pygame.draw.rect(self.pantalla, (0, 122, 255), pygame.Rect(self.posicion[0], self.posicion[1], *self.tamano))
+
+
 
 class Regadera(SpriteArrastrable):
     def __init__(self, pantalla, huerto,nombreSprite='regadera'):
@@ -243,23 +254,22 @@ class Regadera(SpriteArrastrable):
         self.pantalla = pantalla
         self.particulas = []
 
-    def regarPlanta(self, posicionPlanta,planta):
-        # Método para generar partículas en la posición de la planta
-        for _ in range(10):  # Generar 10 partículas
-            particula = Particula(posicionPlanta, self.pantalla)
-            self.particulas.append(particula)
-        planta.crecer(100)  # Regar la planta y hacerla crecer
-        # Regresamos la regadera a su posición original después de regar
+
+    def regarPlanta(self, posicion, planta):
+        """Genera partículas en la posición centrada del sprite de la planta y hace crecer la planta."""
+        centroX = planta.posicion[0] + planta.sprite.get_width() // 2
+        centroY = planta.posicion[1] + planta.sprite.get_height() // 2
+        posicion_central = (centroX, centroY)
+
+        for _ in range(20):  # Genera varias partículas para un efecto más denso
+            self.particulas.append(Particula(posicion_central, self.pantalla))
+        planta.crecer(Config.potenciaRiego)
+        # Restablece la regadera a su posición original
         self.posicion = Config.posiciones['regadera']
 
     def actualizarParticulas(self):
-        """Actualizar y mostrar todas las partículas activas."""
-        for particula in self.particulas[:]:
-            if particula.tiempoVida > 0:
-                particula.actualizar()
-                particula.mostrar()
-            else:
-                self.particulas.remove(particula)
+        """Actualiza y filtra las partículas activas."""
+        self.particulas = [p for p in self.particulas if p.actualizar()]
 
     def ManejarEventoArrastrable(self, evento):
         super().ManejarEventoArrastrable(evento)
@@ -267,11 +277,15 @@ class Regadera(SpriteArrastrable):
             # Verificar si la regadera está sobre alguna planta
             for maceta in self.huerto.macetas:
                 if maceta.contienePlanta and self.sprite.get_rect(topleft=self.posicion).colliderect(maceta.planta.sprite.get_rect(topleft=maceta.planta.posicion)):
-
-                    # Asegúrate de pasar también el objeto planta
-                    self.regarPlanta((maceta.posicion[0], maceta.posicion[1] - 20), maceta.planta)
+                    posicionPlanta = (maceta.posicion[0], maceta.posicion[1] - 20)
+                    self.regarPlanta(posicionPlanta, maceta.planta)
                     break
 
+    def Dibujar(self, pantalla):
+        super().Dibujar(pantalla)
+        for particula in self.particulas:
+            particula.mostrar()
+        self.actualizarParticulas()
 
 
 
@@ -288,6 +302,7 @@ class Huerto:
         self.base_y = y  # Coordenada y inicial
 
     def agregarMaceta(self, maceta):
+        print("Agregando maceta al huerto")
         for fila in range(self.filas):
             for columna in range(self.columnas):
                 if self.espacios[fila][columna] is None:
@@ -297,8 +312,10 @@ class Huerto:
                     maceta.enHuerto = True
                     maceta.posicionHuerto = (fila, columna)
                     maceta.movil = False  # Asegurar que la maceta no se mueva una vez colocada
+                    print(f"Print estado de movilidad de la maceta: {maceta.movil}")
                     if maceta.planta:
                         maceta.planta.movil = False  # También inmovilizar la planta
+                        print(f"Print estado de movilidad de la maceta: {maceta.movil} y planta: {maceta.planta.movil}")
                     self.espacios[fila][columna] = maceta
                     self.macetas.append(maceta)
                     return True  # Detener después de colocar una maceta para evitar duplicados
@@ -347,8 +364,8 @@ class JardinZenSprites:
         multiplicador = 50
         for _ in range(5):
             maceta = Maceta()
-            self.huerto.agregarMaceta(maceta)
             planta = Planta()
+            self.huerto.agregarMaceta(maceta)       
             maceta.plantarPlanta(planta)
             maceta.cambiarMacetaNegra()
             planta.crecer(multiplicador)
