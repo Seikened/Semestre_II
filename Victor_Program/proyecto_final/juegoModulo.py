@@ -3,9 +3,10 @@ from sprites import JardinZenSprites
 import pygame
 
 class Juego():
-    def __init__(self, pantalla):
+    def __init__(self, pantalla,finanzas):
         self.pantalla = pantalla
-        self.sprites = JardinZenSprites(self.pantalla)
+        self.finanzas = finanzas
+        self.sprites = JardinZenSprites(self.pantalla, self.finanzas)
     
     def Recalcula(self, eventos):
         # Actualiza el manejo de eventos de todos los sprites

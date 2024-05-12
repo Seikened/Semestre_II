@@ -4,6 +4,7 @@ from juegoModulo import Juego
 from config import Config
 from tienda import Tienda
 from inventario import Inventario
+from finanzas import Finanzas
 
 # Constantes para estados
 ESTADO_JUEGO = 'juego'
@@ -16,9 +17,10 @@ pygame.font.init()
 screen = pygame.display.set_mode((Config.ventanaAncho, Config.ventanaAlto))
 tienda = Tienda(screen)
 inventario = Inventario(screen)
+finanzas = Finanzas()
 
 estadoActual = ESTADO_JUEGO
-juego = Juego(screen)
+juego = Juego(screen, finanzas)
 
 salir = False
 

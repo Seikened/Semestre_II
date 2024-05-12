@@ -174,6 +174,8 @@ class Planta(SpriteArrastrable):
         self.maceta = None
         self.idPlanta = Planta.numeroPlantas
         self.edad = 1
+        self.salud = 100
+        self.precio = 100
         self.movil = False
         Planta.numeroPlantas += 1
         
@@ -207,10 +209,19 @@ class Planta(SpriteArrastrable):
         elif self.edad > 200:
             self.faseTresCrecimiento()
     
-    def crecer(self,multiplicador=1):
+    def crecer(self, multiplicador=1, finanzas=None):
         self.edad += multiplicador
         self.cambiarFaseCrecimiento()
-        print(f"La edad de la planta es: {self.edad}")
+        ganancia = 0
+        if finanzas:
+            ganancia = self.calcularGananciaPorCrecimiento(multiplicador)
+            finanzas.recolectarMonedas(ganancia)
+        print(f"La edad de la planta es: {self.edad} y has ganado {ganancia} monedas")
+
+    def calcularGananciaPorCrecimiento(self, multiplicador):
+        # Suponemos que la ganancia es proporcional al multiplicador y al tipo de planta
+        factorSuerte = random.uniform(0.8, 1.2)  # Factor aleatorio para simular suerte
+        return multiplicador * (self.precio // 100) * factorSuerte
     
     
     def Dibujar(self, pantalla):
@@ -248,12 +259,13 @@ class Particula:
 
 
 class Regadera(SpriteArrastrable):
-    def __init__(self, pantalla, huerto,nombreSprite='regadera'):
+    def __init__(self, pantalla, huerto,finanzas,nombreSprite='regadera'):
         x , y, x2, y2 = Config.coordenadas[nombreSprite]
         anchura, altura = Config.tamanos[nombreSprite]
         sprite = SpriteSheet(Config.spritesFile).obtenerSprite(x, y, anchura, altura)
         posicion = Config.posiciones[nombreSprite]
         super().__init__(redimensionarSprite(sprite,Config.escala), posicion)
+        self.finanzas = finanzas
         self.huerto = huerto
         self.pantalla = pantalla
         self.particulas = []
@@ -267,7 +279,7 @@ class Regadera(SpriteArrastrable):
 
         for _ in range(20):  # Genera varias partículas para un efecto más denso
             self.particulas.append(Particula(posicion_central, self.pantalla))
-        planta.crecer(Config.potenciaRiego)
+        planta.crecer(Config.potenciaRiego,self.finanzas)
         # Restablece la regadera a su posición original
         self.posicion = Config.posiciones['regadera']
 
@@ -356,11 +368,12 @@ class Huerto:
 class JardinZenSprites:
     """Clase para gestionar todos los sprites del Jardín Zen."""
 
-    def __init__(self, pantalla):
+    def __init__(self, pantalla,fianzas):
         self.pantalla = pantalla
+        self.finanzas = fianzas
         self.fondo = Fondo()
-        self.huerto = Huerto() # Espacios de 100 píxeles entre macetas
-        self.regadera = Regadera(pantalla, self.huerto)
+        self.huerto = Huerto() 
+        self.regadera = Regadera(pantalla, self.huerto,self.finanzas)
         
         # Inicializar macetas y plantas
         self.inicializarMacetasYPlantas()
