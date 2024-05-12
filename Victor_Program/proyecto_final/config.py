@@ -64,3 +64,23 @@ class Config:
         'plantaFase2': (400, 300),
         'plantaFase1': (55, 666)
     }
+
+
+# Tienda de items
+    items = [
+        {
+            id: 'macetaCafe',
+            'nombre': 'Maceta Café',
+            'precio': 100
+        },
+        {
+            id: 'macetaNegra',
+            'nombre': 'Maceta Negra',
+            'precio': 150
+        },
+        {
+            id: 'plantaFase1',
+            'nombre': 'Mini palmera',
+            'precio': 150
+        }
+    ]

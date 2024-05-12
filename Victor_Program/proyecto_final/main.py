@@ -1,48 +1,65 @@
-# Archivo: main.py 
-
+# main.py
 import pygame
 from juegoModulo import Juego
 from config import Config
+from tienda import Tienda
+from inventario import Inventario
+
+# Constantes para estados
+ESTADO_JUEGO = 'juego'
+ESTADO_TIENDA = 'tienda'
+ESTADO_INVENTARIO = 'inventario'
 
 pygame.init()
-pygame.font.init()  # Inicializa el módulo de fuentes
-font_size = 24
-font = pygame.font.Font(None, font_size)  # None para usar la fuente predeterminada
-text_color = (255, 255, 255)
+pygame.font.init()
 
-# Creamos la ventana de juego
-tamano = (Config.ventanaAncho, Config.ventanaAlto)
-deltaTiempo_s = Config.deltaTiempo
-screen = pygame.display.set_mode(tamano)
+screen = pygame.display.set_mode((Config.ventanaAncho, Config.ventanaAlto))
+tienda = Tienda(screen)
+inventario = Inventario(screen)
 
-# Asegúrate de pasar la pantalla al constructor de Juego
-juego1 = Juego(screen)
+estadoActual = ESTADO_JUEGO
+juego = Juego(screen)
 
 salir = False
 
 while not salir:
     eventos = pygame.event.get()
-    for event in eventos:
-        if event.type == pygame.QUIT:
+    for evento in eventos:
+        if evento.type == pygame.QUIT:
             salir = True
-    # Entrada por teclado
-    key = pygame.key.get_pressed()
-    if key[pygame.K_ESCAPE]:
-        salir = True
-    
-    # Aquí recalculamos todas laNs variables 
-    juego1.Recalcula(eventos)
-    
-    # Aquí redibujamos todos los objetos.
+        if evento.type == pygame.KEYDOWN:
+            if evento.key == pygame.K_t:
+                if estadoActual != ESTADO_TIENDA:
+                    estadoActual = ESTADO_TIENDA
+                    tienda.activa = True
+                    inventario.activa = False
+                else:
+                    estadoActual = ESTADO_JUEGO
+                    tienda.activa = False
+            if evento.key == pygame.K_i:
+                if estadoActual != ESTADO_INVENTARIO:
+                    estadoActual = ESTADO_INVENTARIO
+                    inventario.activa = True
+                    tienda.activa = False
+                else:
+                    estadoActual = ESTADO_JUEGO
+                    inventario.activa = False
+            if evento.key == pygame.K_ESCAPE:
+                salir = True
+
     screen.fill((0, 0, 0))
-    juego1.Dibuja()  # Asegúrate de que el método Dibuja ya no necesita la pantalla como argumento
 
-    # Renderiza el texto y colócalo en la pantalla
+    if estadoActual == ESTADO_JUEGO:
+        juego.Recalcula(eventos)
+        juego.Dibuja()
+    elif estadoActual == ESTADO_TIENDA:
+        tienda.manejarEventos(eventos)
+        tienda.renderizar()
+    elif estadoActual == ESTADO_INVENTARIO:
+        inventario.manejarEventos(eventos)
+        inventario.renderizar()
 
-
-    # Actualiza la pantalla
     pygame.display.flip()
-    pygame.time.wait(int(deltaTiempo_s * 1000)) # Espera el tiempo necesario para 60 FPS
+    pygame.time.wait(int(Config.deltaTiempo * 1000))
 
-pygame.display.quit()
-print("fin del Juego")
+pygame.quit()
