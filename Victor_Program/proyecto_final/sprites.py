@@ -143,13 +143,16 @@ class Maceta(SpriteArrastrable):
         depurarSprite('macetaNegra', (x, y, x2, y2), Config.posiciones['macetaNegra'], Config.escala, Config.tamanos['macetaNegra'], Maceta.numeroMacetas)
     
     def plantarPlanta(self, planta):
-        self.contienePlanta = True
-        self.planta = planta
-        planta.enMaceta = True
-        x, y = self.posicion
-        planta.posicion = (x , y - 10)
-        planta.maceta = self
-        
+        if not self.contienePlanta:
+            self.planta = planta
+            # Estados y variables de planta
+            planta.posicion = (self.posicion[0], self.posicion[1] - 10)  # Ajusta la posición de la planta dentro de la maceta
+            planta.movil = False  # La planta ya no se puede mover independientemente
+            planta.enMaceta = True
+            planta.maceta = self
+            
+            # Estados y variables de la maceta
+            self.contienePlanta = True
     
     def Dibujar(self, pantalla):
         return super().Dibujar(pantalla)
@@ -166,6 +169,7 @@ class Planta(SpriteArrastrable):
         posicion = Config.posiciones[nombreSprite]
         super().__init__(redimensionarSprite(sprite,Config.escala), posicion)
         self.nombreSprite = nombreSprite
+        
         self.enMaceta = False
         self.maceta = None
         self.idPlanta = Planta.numeroPlantas
@@ -302,25 +306,27 @@ class Huerto:
         self.base_y = y  # Coordenada y inicial
 
     def agregarMaceta(self, maceta):
-        print("Agregando maceta al huerto")
-        for fila in range(self.filas):
-            for columna in range(self.columnas):
-                if self.espacios[fila][columna] is None:
-                    x = self.base_x + columna * self.espacio_x
-                    y = self.base_y + fila * self.espacio_y
-                    maceta.posicion = (x, y)
-                    maceta.enHuerto = True
-                    maceta.posicionHuerto = (fila, columna)
-                    maceta.movil = False  # Asegurar que la maceta no se mueva una vez colocada
-                    print(f"Print estado de movilidad de la maceta: {maceta.movil}")
-                    if maceta.planta:
-                        maceta.planta.movil = False  # También inmovilizar la planta
-                        print(f"Print estado de movilidad de la maceta: {maceta.movil} y planta: {maceta.planta.movil}")
-                    self.espacios[fila][columna] = maceta
-                    self.macetas.append(maceta)
-                    return True  # Detener después de colocar una maceta para evitar duplicados
-        print("No hay espacio disponible en el huerto")
-        return False
+        # Lógica para colocar la maceta en el huerto
+        if not maceta.enHuerto:
+            # Encuentra el primer lugar disponible y coloca la maceta allí
+            for fila in range(self.filas):
+                for columna in range(self.columnas):
+                    if self.espacios[fila][columna] is None:
+                        self.posicionarEnHuerto(maceta, fila, columna)
+                        return True
+            print("No hay espacio disponible en el huerto")
+            return False
+
+    def posicionarEnHuerto(self, maceta, fila, columna):
+        x = self.base_x + columna * self.espacio_x
+        y = self.base_y + fila * self.espacio_y
+        maceta.posicion = (x, y)
+        maceta.enHuerto = True
+        maceta.movil = False
+        if maceta.contienePlanta:
+            maceta.planta.movil = False
+        self.espacios[fila][columna] = maceta
+        self.macetas.append(maceta)
 
 
     def dibujarHuerto(self, pantalla):
