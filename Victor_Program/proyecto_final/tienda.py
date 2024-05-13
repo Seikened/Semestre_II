@@ -2,8 +2,11 @@ import pygame
 from config import Config
 
 class Tienda:
-    def __init__(self, pantalla):
+    def __init__(self, pantalla,finanzas, inventario):
         self.pantalla = pantalla
+        self.finanzas = finanzas
+        self.saldo = finanzas.saldo
+        self.inventario = inventario
         self.fuente = pygame.font.Font(None, 24)
         self.articulos = Config.items
         self.activa = False
@@ -37,7 +40,7 @@ class Tienda:
             return
         
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        rectFondoTienda = pygame.Rect(0, 0, 300, 200)  # Rectángulo del fondo de la tienda
+        rectFondoTienda = pygame.Rect(0, 0, 300, 200)
         rectFondoTienda.center = (Config.ventanaAncho // 2, Config.ventanaAlto // 2)
 
         self.hoveredItemIndex = None
@@ -45,13 +48,17 @@ class Tienda:
             y_pos = rectFondoTienda.top + 50 + i * 30
             item_rect = pygame.Rect(rectFondoTienda.left + 10, y_pos, 280, 30)
             if item_rect.collidepoint(mouse_x, mouse_y):
-                self.hoveredItemIndex = i  # Establece el índice del artículo hovered
+                self.hoveredItemIndex = i
 
+        # Compra de artículo si se hace clic en él y hay saldo suficiente
         for evento in eventos:
-            if evento.type == pygame.MOUSEBUTTONDOWN:
-                if self.hoveredItemIndex is not None:
-                    # Código para manejar la compra del artículo hovered
-                    print(f"Comprado: {self.articulos[self.hoveredItemIndex]['nombre']}")
+            if evento.type == pygame.MOUSEBUTTONDOWN and self.hoveredItemIndex is not None:
+                articulo = self.articulos[self.hoveredItemIndex]
+                if self.finanzas.reducirSaldo(articulo['precio']):
+                    self.inventario.agregarItem(articulo[id], 1)
+                    print(f"Comprado: {articulo['nombre']} por ${articulo['precio']} y tu saldo actual es ${self.saldo}")
+                else:
+                    print("Saldo insuficiente para comprar este artículo.")
     
     def toggle_activa(self):
         self.activa = not self.activa

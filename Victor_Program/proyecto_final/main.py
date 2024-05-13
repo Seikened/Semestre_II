@@ -1,5 +1,6 @@
 # main.py
 import pygame
+import os
 from juegoModulo import Juego
 from config import Config
 from tienda import Tienda
@@ -15,14 +16,20 @@ pygame.init()
 pygame.font.init()
 
 screen = pygame.display.set_mode((Config.ventanaAncho, Config.ventanaAlto))
-tienda = Tienda(screen)
-inventario = Inventario(screen)
 finanzas = Finanzas()
+juego = Juego(screen, finanzas)
+huerto = juego.jardin.huerto
+inventario = Inventario(screen,finanzas, huerto)
+tienda = Tienda(screen,finanzas,inventario)
 
 estadoActual = ESTADO_JUEGO
-juego = Juego(screen, finanzas)
 
 salir = False
+
+# Cargar y reproducir música de fondo
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+pygame.mixer.music.load("ZELDA.mp3")
+pygame.mixer.music.play(loops=-1)
 
 while not salir:
     eventos = pygame.event.get()
@@ -54,6 +61,7 @@ while not salir:
     if estadoActual == ESTADO_JUEGO:
         juego.Recalcula(eventos)
         juego.Dibuja()
+        finanzas.chequearRecompensaTiempo()
     elif estadoActual == ESTADO_TIENDA:
         tienda.manejarEventos(eventos)
         tienda.renderizar()

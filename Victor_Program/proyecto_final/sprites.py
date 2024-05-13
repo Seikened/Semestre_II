@@ -329,6 +329,14 @@ class Huerto:
             print("No hay espacio disponible en el huerto")
             return False
 
+    def plantarEnMaceta(self, planta):
+        for maceta in self.macetas:
+            if not maceta.contienePlanta:
+                maceta.plantarPlanta(planta)
+                return True
+        print("No hay macetas disponibles para plantar")
+        return False
+
     def posicionarEnHuerto(self, maceta, fila, columna):
         x = self.base_x + columna * self.espacio_x
         y = self.base_y + fila * self.espacio_y
@@ -340,6 +348,18 @@ class Huerto:
         self.espacios[fila][columna] = maceta
         self.macetas.append(maceta)
 
+    def quitarMaceta(self, maceta):
+        for fila in range(self.filas):
+            for columna in range(self.columnas):
+                if self.espacios[fila][columna] == maceta:
+                    self.espacios[fila][columna] = None
+                    self.macetas.remove(maceta)
+                    maceta.enHuerto = False
+                    maceta.movil = True
+                    if maceta.contienePlanta:
+                        maceta.planta.movil = True
+                    return True
+        return False
 
     def dibujarHuerto(self, pantalla):
         # Dibuja un fondo de cuadrícula para el huerto
@@ -380,15 +400,14 @@ class JardinZenSprites:
 
     def inicializarMacetasYPlantas(self):
         # Crear y agregar macetas y asociarlas con plantas y ambas con el huerto
-        multiplicador = 50
-        for _ in range(5):
+
+        for _ in range(2):
             maceta = Maceta()
             planta = Planta()
             self.huerto.agregarMaceta(maceta)       
             maceta.plantarPlanta(planta)
-            maceta.cambiarMacetaNegra()
-            planta.crecer(multiplicador)
-            multiplicador += 50
+
+
 
     def dibujarTodos(self):
         """Dibuja todos los objetos en la pantalla."""

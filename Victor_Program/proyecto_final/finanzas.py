@@ -1,13 +1,19 @@
 import time
 
 class Finanzas:
-    def __init__(self, saldo_inicial=50):
-        self.saldo = saldo_inicial
+    def __init__(self, saldoaInicial=50):
+        self.saldo = saldoaInicial
         self.ultimaVez = time.time()
 
     def recolectarMonedas(self, ahorros):
         self.saldo += ahorros
         print(f"Has recolectado {ahorros} monedas! Saldo actual: {self.saldo}")
+
+    def reducirSaldo(self, costo):
+        if self.saldo >= costo:
+            self.saldo -= costo
+            return True
+        return False
 
     def dineroPorTiempo(self):
         presente = time.time()
@@ -22,6 +28,12 @@ class Finanzas:
             print(f"¡Ganaste {ganancias} monedas mientras no estabas!")
         else:
             print("¡Volviste pronto!")
+    
+    def chequearRecompensaTiempo(self, intervalo=10):
+        presente = time.time()
+        if presente - self.ultimaVez >= intervalo:
+            self.ultimaVez = presente  # Actualiza el último tiempo de recompensa
+            self.recolectarMonedas(1)  # Añade monedas cada intervalo
     
     def obtenerSaldo(self):
         return self.saldo
