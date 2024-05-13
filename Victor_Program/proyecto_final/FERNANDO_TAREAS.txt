@@ -1,3 +1,381 @@
+#config.py
+# Archivo de configuración para el proyecto final
+
+class Config:
+    # Tamaño de la ventana
+    ventanaAncho = 735
+    ventanaAlto = 1033
+    deltaTiempo = 0.0167  # Este valor es para 60 FPS
+    pantallaTitulo = "Jardín Zen - Fase 1"
+    
+    # Potencia de riego
+    potenciaRiego = 10
+    
+
+    # Rutas de los recursos
+    imgFolder = "img"
+    spritesFile = "sprites.png"
+    fondo = "fondo.jpeg"
+    
+    escala = 20  # Escala de los sprites
+    
+    # Coordenadas iniciales (x, y) y finales (x2, y2)
+    coordenadas = {
+        'fondo': (0, 0, 735, 1033),
+        'macetaCafe': (50, 348, 247, 524),
+        'macetaNegra': (50, 553, 247, 730),
+        'regadera': (1445, 388, 1849, 637),
+        'plantaFase3': (9, 759, 298, 884),
+        'plantaFase2': (9, 892, 298, 1007),
+        'plantaFase1': (50, 1016, 267, 1110)
+    }
+
+    # Función para calcular las dimensiones a partir de las coordenadas iniciales y finales
+    def calcularDimensiones(coord):
+        return coord[2] - coord[0], coord[3] - coord[1]
+
+    # Centro vertical (y) para cada sprite
+    centroSprite = {
+        'macetaCafe': (524 + 348) // 2,
+        'macetaNegra': (730 + 553) // 2,
+        'regadera': (637 + 388) // 2,
+        'plantaFase3': 854,
+        'plantaFase2': 997,
+        'plantaFase1': 1099
+    }
+
+    # Tamaños calculados utilizando la función `calcularDimensiones`
+    tamanos = {
+        'macetaCafe': calcularDimensiones(coordenadas['macetaCafe']),
+        'macetaNegra': calcularDimensiones(coordenadas['macetaNegra']),
+        'regadera': calcularDimensiones(coordenadas['regadera']),
+        'plantaFase3': calcularDimensiones(coordenadas['plantaFase3']),
+        'plantaFase2': calcularDimensiones(coordenadas['plantaFase2']),
+        'plantaFase1': calcularDimensiones(coordenadas['plantaFase1'])
+    }
+
+    # Posiciones iniciales en pantalla
+    posiciones = {
+        'huerto': (305, 600),
+        'fotoFondo': (0, 0),
+        'macetaCafe': (322, 615),
+        'macetaNegra': (300, 100),
+        'regadera': (392, 464),
+        'plantaFase3': (600, 300),
+        'plantaFase2': (400, 300),
+        'plantaFase1': (55, 666)
+    }
+
+
+# Tienda de items
+    items = [
+        {
+            id: 'macetaCafe',
+            'nombre': 'Maceta Café',
+            'precio': 100
+        },
+        {
+            id: 'macetaNegra',
+            'nombre': 'Maceta Negra',
+            'precio': 150
+        },
+        {
+            id: 'plantaFase1',
+            'nombre': 'Mini palmera',
+            'precio': 150
+        }
+    ]
+#--------------------------------------------------
+#finanzas.py
+import time
+
+class Finanzas:
+    def __init__(self, saldoaInicial=50):
+        self.saldo = saldoaInicial
+        self.ultimaVez = time.time()
+
+    def recolectarMonedas(self, ahorros):
+        self.saldo += ahorros
+        print(f"Has recolectado {ahorros} monedas! Saldo actual: {self.saldo}")
+
+    def reducirSaldo(self, costo):
+        if self.saldo >= costo:
+            self.saldo -= costo
+            return True
+        return False
+
+    def dineroPorTiempo(self):
+        presente = time.time()
+        tiempoTranscurrido = presente - self.ultimaVez
+        self.ultimaVez = presente  # Actualiza el último tiempo de chequeo
+        minutos = tiempoTranscurrido / 60
+        monedasPorMinuto = int(minutos) / 10
+        monedasPorHora = int(minutos) / 60 * 2  # Ganancia de 2 monedas por hora
+        ganancias = int(monedasPorMinuto + monedasPorHora)
+        if ganancias > 0:
+            self.recolectarMonedas(ganancias)
+            print(f"¡Ganaste {ganancias} monedas mientras no estabas!")
+        else:
+            print("¡Volviste pronto!")
+    
+    def chequearRecompensaTiempo(self, intervalo=10):
+        presente = time.time()
+        if presente - self.ultimaVez >= intervalo:
+            self.ultimaVez = presente  # Actualiza el último tiempo de recompensa
+            self.recolectarMonedas(1)  # Añade monedas cada intervalo
+    
+    def obtenerSaldo(self):
+        return self.saldo
+
+#--------------------------------------------------
+#inventario.py
+# inventario.py
+import pygame
+from config import Config
+from sprites import *
+
+class Inventario:
+    def __init__(self, pantalla,finanzas,huerto, capacidad=10):
+        self.pantalla = pantalla
+        self.finanzas = finanzas
+        self.saldo = finanzas.saldo
+        self.huerto = huerto   
+        self.capacidad = capacidad
+        self.slots = [{'id': None, 'cantidad': 0} for _ in range(capacidad)]
+        self.activa = False
+        self.dialogoActivo = False
+        self.fuente = pygame.font.Font(None, 24)
+        self.hoveredItemIndex = None  # Índice del slot sobre el que está el cursor
+
+    def agregarItem(self, item_id, cantidad=1):
+        for slot in self.slots:
+            if slot['id'] == item_id:
+                slot['cantidad'] += cantidad
+                return True
+            elif slot['id'] is None:
+                slot['id'] = item_id
+                slot['cantidad'] = cantidad
+                return True
+        return False
+
+    def quitarItem(self, item_id, cantidad=1):
+        for slot in self.slots:
+            if slot['id'] == item_id and slot['cantidad'] >= cantidad:
+                slot['cantidad'] -= cantidad
+                if slot['cantidad'] == 0:
+                    slot['id'] = None
+                return True
+        return False
+
+    def renderizar(self):
+        if not self.activa:
+            return
+        
+        altura_fondo = 60 + 30 * self.capacidad  # Ajuste dinámico del fondo según la cantidad de slots
+        fondoInventario = pygame.Surface((300, altura_fondo))
+        fondoInventario.fill((139, 69, 19))  # Marrón tipo madera
+        rectFondoInventario = fondoInventario.get_rect(center=(Config.ventanaAncho // 2, Config.ventanaAlto // 2))
+        self.pantalla.blit(fondoInventario, rectFondoInventario.topleft)
+        pygame.draw.rect(self.pantalla, (255, 255, 255), rectFondoInventario, 3)  # Borde blanco
+
+        textoTitulo = self.fuente.render("Inventario", True, (255, 255, 255))
+        self.pantalla.blit(textoTitulo, (rectFondoInventario.left + 10, rectFondoInventario.top + 10))
+
+        for i, slot in enumerate(self.slots):
+            y_pos = rectFondoInventario.top + 50 + i * 30
+            infoItem = f"{slot['id'] if slot['id'] else 'Vacío'}  x {slot['cantidad']}" if slot['id'] else "Vacío"
+            colorTexto = (255, 255, 255) if i != self.hoveredItemIndex else (200, 200, 200)
+            textoSlot = self.fuente.render(infoItem, True, colorTexto)
+            self.pantalla.blit(textoSlot, (rectFondoInventario.left + 10, y_pos))
+
+        if self.dialogoActivo and self.hoveredItemIndex is not None:
+            self.renderizarDialogo()
+    
+    def renderizarDialogo(self):
+        dialogo_fondo = pygame.Surface((200, 100))
+        dialogo_fondo.fill((255, 250, 250))  # Fondo claro para el diálogo
+        rectDialogo = dialogo_fondo.get_rect(center=(Config.ventanaAncho // 2, Config.ventanaAlto // 2))
+        self.pantalla.blit(dialogo_fondo, rectDialogo.topleft)
+
+        opciones = ["Plantar", "Vender"]
+        for i, opcion in enumerate(opciones):
+            texto_opcion = self.fuente.render(opcion, True, (0, 0, 0))
+            self.pantalla.blit(texto_opcion, (rectDialogo.left + 10, rectDialogo.top + 10 + i * 30))
+
+
+    def venderItem(self, item_id):
+        # Encuentra el artículo en la lista de items
+        item = next((item for item in Config.items if item[id] == item_id), None)
+        if item:
+            precio = item['precio']
+            if self.quitarItem(item_id):
+                self.finanzas.recolectarMonedas(precio)
+                print(f"Vendido: {item['nombre']} por ${precio} y tu Saldo actual: {self.saldo}")
+            else:
+                print(f"No se pudo vender {item['nombre']}")
+        else:
+            print("Ítem no encontrado.")
+    
+    def agregarItemAHuerto(self, item_id):
+        if item_id == 'macetaCafe' or item_id == 'macetaNegra':
+            maceta = Maceta(item_id)
+            self.huerto.agregarMaceta(maceta)
+        elif item_id == 'plantaFase1':
+            planta = Planta(item_id)
+            if not self.huerto.plantarEnMaceta(planta):
+                print("No hay macetas disponibles para plantar")
+        else:
+            print("No se puede plantar este ítem")
+        self.quitarItem(item_id)
+    
+    
+    
+    def manejarEventos(self, eventos):
+        if not self.activa:
+            return
+        
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        rectFondoInventario = pygame.Rect(0, 0, 300, 60 + 30 * self.capacidad)
+        rectFondoInventario.center = (Config.ventanaAncho // 2, Config.ventanaAlto // 2)
+        
+        self.hoveredItemIndex = None
+        for i, slot in enumerate(self.slots):
+            y_pos = rectFondoInventario.top + 50 + i * 30
+            item_rect = pygame.Rect(rectFondoInventario.left + 10, y_pos, 280, 30)
+            if item_rect.collidepoint(mouse_x, mouse_y):
+                self.hoveredItemIndex = i  # Identifica el ítem sobre el que se encuentra el cursor
+                break  # Termina el loop una vez que se encuentra el ítem hovered
+
+        for evento in eventos:
+            if evento.type == pygame.MOUSEBUTTONDOWN and self.hoveredItemIndex is not None:
+                # Solo muestra el diálogo si el ítem no es "Vacío"
+                item_id = self.slots[self.hoveredItemIndex]['id']
+                if item_id is not None:
+                    self.mostrarDialogo(item_id)
+
+        if self.dialogoActivo:
+            self.manejarEventosDialogo(eventos)
+
+    def manejarEventosDialogo(self, eventos):
+        for evento in eventos:
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                # Suponiendo que las opciones están dibujadas a una altura de 30 pixels cada una
+                rectDialogo = pygame.Rect(Config.ventanaAncho // 2 - 100, Config.ventanaAlto // 2 - 50, 200, 100)
+                if rectDialogo.collidepoint(x, y):
+                    index = (y - rectDialogo.top) // 30
+                    if index == 0:  # Plantar
+                        self.agregarItemAHuerto(self.opcionSeleccionada)
+                    elif index == 1:  # Vender
+                        self.venderItem(self.opcionSeleccionada)
+                    self.dialogoActivo = False
+                    
+    def toggle_activa(self):
+        self.activa = not self.activa
+
+    def mostrarDialogo(self, item_id):
+        self.dialogoActivo = True
+        self.opcionSeleccionada = item_id
+#--------------------------------------------------
+#juegoModulo.py
+# juegoModulo.py
+from sprites import JardinZenSprites
+import pygame
+
+class Juego():
+    def __init__(self, pantalla,finanzas):
+        self.pantalla = pantalla
+        self.finanzas = finanzas
+        self.jardin = JardinZenSprites(self.pantalla, self.finanzas)
+    
+    def Recalcula(self, eventos):
+        # Actualiza el manejo de eventos de todos los sprites
+        self.jardin.manejarEventos(eventos)
+    
+    def Dibuja(self):
+        # Dibuja todos los elementos gráficos del juego
+        self.jardin.dibujarTodos()
+
+#--------------------------------------------------
+#main.py
+# main.py
+import pygame
+import os
+from juegoModulo import Juego
+from config import Config
+from tienda import Tienda
+from inventario import Inventario
+from finanzas import Finanzas
+
+# Constantes para estados
+ESTADO_JUEGO = 'juego'
+ESTADO_TIENDA = 'tienda'
+ESTADO_INVENTARIO = 'inventario'
+
+pygame.init()
+pygame.font.init()
+
+screen = pygame.display.set_mode((Config.ventanaAncho, Config.ventanaAlto))
+finanzas = Finanzas()
+juego = Juego(screen, finanzas)
+huerto = juego.jardin.huerto
+inventario = Inventario(screen,finanzas, huerto)
+tienda = Tienda(screen,finanzas,inventario)
+
+estadoActual = ESTADO_JUEGO
+
+salir = False
+
+# Cargar y reproducir música de fondo
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+pygame.mixer.music.load("ZELDA.mp3")
+pygame.mixer.music.play(loops=-1)
+
+while not salir:
+    eventos = pygame.event.get()
+    for evento in eventos:
+        if evento.type == pygame.QUIT:
+            salir = True
+        if evento.type == pygame.KEYDOWN:
+            if evento.key == pygame.K_t:
+                if estadoActual != ESTADO_TIENDA:
+                    estadoActual = ESTADO_TIENDA
+                    tienda.activa = True
+                    inventario.activa = False
+                else:
+                    estadoActual = ESTADO_JUEGO
+                    tienda.activa = False
+            if evento.key == pygame.K_i:
+                if estadoActual != ESTADO_INVENTARIO:
+                    estadoActual = ESTADO_INVENTARIO
+                    inventario.activa = True
+                    tienda.activa = False
+                else:
+                    estadoActual = ESTADO_JUEGO
+                    inventario.activa = False
+            if evento.key == pygame.K_ESCAPE:
+                salir = True
+
+    screen.fill((0, 0, 0))
+
+    if estadoActual == ESTADO_JUEGO:
+        juego.Recalcula(eventos)
+        juego.Dibuja()
+        finanzas.chequearRecompensaTiempo()
+    elif estadoActual == ESTADO_TIENDA:
+        tienda.manejarEventos(eventos)
+        tienda.renderizar()
+    elif estadoActual == ESTADO_INVENTARIO:
+        inventario.manejarEventos(eventos)
+        inventario.renderizar()
+
+    pygame.display.flip()
+    pygame.time.wait(int(Config.deltaTiempo * 1000))
+
+pygame.quit()
+
+#--------------------------------------------------
+#sprites.py
 import os
 import pygame
 import random
@@ -156,27 +534,6 @@ class Maceta(SpriteArrastrable):
     
     def Dibujar(self, pantalla):
         return super().Dibujar(pantalla)
-    
-    def guardar(self):
-        # Guardar el estado básico de la maceta
-        estado = {
-            'tipoMaceta': self.tipoMaceta,
-            'posicionHuerto': self.posicionHuerto,
-            'contienePlanta': self.contienePlanta,
-            'idMaceta': self.idMaceta
-        }
-        if self.contienePlanta:
-            estado['planta'] = self.planta.guardar()
-        return estado
-
-    def cargar(self, estado):
-        self.tipoMaceta = estado['tipoMaceta']
-        self.posicionHuerto = estado['posicionHuerto']
-        self.contienePlanta = estado['contienePlanta']
-        self.idMaceta = estado['idMaceta']
-        if self.contienePlanta:
-            self.planta = Planta()
-            self.planta.cargar(estado['planta'])
 
 
 class Planta(SpriteArrastrable):
@@ -247,30 +604,6 @@ class Planta(SpriteArrastrable):
     
     def Dibujar(self, pantalla):
         return super().Dibujar(pantalla)
-    
-    def guardar(self):
-        return {
-            'nombreSprite': self.nombreSprite,
-            'edad': self.edad,
-            'salud': self.salud,
-            'precio': self.precio,
-            'idPlanta': self.idPlanta
-        }
-
-    def cargar(self, estado):
-        self.nombreSprite = estado['nombreSprite']
-        self.edad = estado['edad']
-        self.salud = estado['salud']
-        self.precio = estado['precio']
-        self.idPlanta = estado['idPlanta']
-        self.actualizarSprite()
-    
-    def actualizarSprite(self):
-        x,y,x2,y2 = Config.coordenadas[self.nombreSprite]
-        anchura, altura = Config.tamanos[self.nombreSprite]
-        sprite = SpriteSheet(Config.spritesFile).obtenerSprite(x, y, anchura, altura)
-        self.sprite = redimensionarSprite(sprite,Config.escala)
-        print(f"Sprite actualizado a {self.nombreSprite}")
 
 
 
@@ -428,18 +761,6 @@ class Huerto:
                 if maceta.planta:
                     maceta.planta.ManejarEventoArrastrable(evento)
 
-    def guardar(self):
-        # Guardar el estado de todas las macetas
-        macetas_estado = [maceta.guardar() for maceta in self.macetas]
-        return {'macetas': macetas_estado}
-
-    def cargar(self, estado):
-        self.macetas = []
-        for maceta_estado in estado['macetas']:
-            maceta = Maceta()
-            maceta.cargar(maceta_estado)
-            self.agregarMaceta(maceta)
-
 
 
 class JardinZenSprites:
@@ -477,3 +798,70 @@ class JardinZenSprites:
         for evento in eventos:
             self.huerto.manejarEventosHuerto(eventos)
             self.regadera.ManejarEventoArrastrable(evento)
+#--------------------------------------------------
+#tienda.py
+import pygame
+from config import Config
+
+class Tienda:
+    def __init__(self, pantalla,finanzas, inventario):
+        self.pantalla = pantalla
+        self.finanzas = finanzas
+        self.saldo = finanzas.saldo
+        self.inventario = inventario
+        self.fuente = pygame.font.Font(None, 24)
+        self.articulos = Config.items
+        self.activa = False
+        self.hoveredItemIndex = None  # Índice del artículo sobre el que está el cursor
+
+    def renderizar(self):
+        if not self.activa:
+            return
+
+        # Configuración del fondo de la tienda
+        fondoTienda = pygame.Surface((300, 200))
+        fondoTienda.fill((34, 139, 34))
+        rectFondoTienda = fondoTienda.get_rect(center=(Config.ventanaAncho // 2, Config.ventanaAlto // 2))
+        self.pantalla.blit(fondoTienda, rectFondoTienda.topleft)
+        pygame.draw.rect(self.pantalla, (255, 255, 255), rectFondoTienda, 3)
+
+        # Título de la tienda
+        superficieTitulo = self.fuente.render("Tienda de Jardinería", True, (255, 255, 255))
+        self.pantalla.blit(superficieTitulo, (rectFondoTienda.left + 10, rectFondoTienda.top + 10))
+
+        # Renderizar cada artículo de la tienda
+        for i, articulo in enumerate(self.articulos):
+            y_pos = rectFondoTienda.top + 50 + i * 30
+            texto = f"{articulo['nombre']} - ${articulo['precio']}"
+            colorTexto = (255, 255, 255) if i != self.hoveredItemIndex else (200, 200, 200)  # Cambio de color si es hovered
+            superficieTexto = self.fuente.render(texto, True, colorTexto)
+            self.pantalla.blit(superficieTexto, (rectFondoTienda.left + 10, y_pos))
+
+    def manejarEventos(self, eventos):
+        if not self.activa:
+            return
+        
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        rectFondoTienda = pygame.Rect(0, 0, 300, 200)
+        rectFondoTienda.center = (Config.ventanaAncho // 2, Config.ventanaAlto // 2)
+
+        self.hoveredItemIndex = None
+        for i, articulo in enumerate(self.articulos):
+            y_pos = rectFondoTienda.top + 50 + i * 30
+            item_rect = pygame.Rect(rectFondoTienda.left + 10, y_pos, 280, 30)
+            if item_rect.collidepoint(mouse_x, mouse_y):
+                self.hoveredItemIndex = i
+
+        # Compra de artículo si se hace clic en él y hay saldo suficiente
+        for evento in eventos:
+            if evento.type == pygame.MOUSEBUTTONDOWN and self.hoveredItemIndex is not None:
+                articulo = self.articulos[self.hoveredItemIndex]
+                if self.finanzas.reducirSaldo(articulo['precio']):
+                    self.inventario.agregarItem(articulo[id], 1)
+                    print(f"Comprado: {articulo['nombre']} por ${articulo['precio']} y tu saldo actual es ${self.saldo}")
+                else:
+                    print("Saldo insuficiente para comprar este artículo.")
+    
+    def toggle_activa(self):
+        self.activa = not self.activa
+#--------------------------------------------------

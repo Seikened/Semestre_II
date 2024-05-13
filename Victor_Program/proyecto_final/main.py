@@ -6,6 +6,7 @@ from config import Config
 from tienda import Tienda
 from inventario import Inventario
 from finanzas import Finanzas
+from sesion import Sesion
 
 # Constantes para estados
 ESTADO_JUEGO = 'juego'
@@ -22,6 +23,7 @@ huerto = juego.jardin.huerto
 inventario = Inventario(screen,finanzas, huerto)
 tienda = Tienda(screen,finanzas,inventario)
 
+
 estadoActual = ESTADO_JUEGO
 
 salir = False
@@ -30,6 +32,9 @@ salir = False
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 pygame.mixer.music.load("ZELDA.mp3")
 pygame.mixer.music.play(loops=-1)
+
+sesion = Sesion(finanzas, huerto, inventario)
+sesion.cargarSesion()
 
 while not salir:
     eventos = pygame.event.get()
@@ -54,6 +59,7 @@ while not salir:
                     estadoActual = ESTADO_JUEGO
                     inventario.activa = False
             if evento.key == pygame.K_ESCAPE:
+                sesion.guardarSesion()
                 salir = True
 
     screen.fill((0, 0, 0))
@@ -68,6 +74,9 @@ while not salir:
     elif estadoActual == ESTADO_INVENTARIO:
         inventario.manejarEventos(eventos)
         inventario.renderizar()
+    
+    
+    finanzas.renderizarSaldo(screen)
 
     pygame.display.flip()
     pygame.time.wait(int(Config.deltaTiempo * 1000))

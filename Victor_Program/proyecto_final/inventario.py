@@ -145,3 +145,14 @@ class Inventario:
     def mostrarDialogo(self, item_id):
         self.dialogoActivo = True
         self.opcionSeleccionada = item_id
+
+    def guardar(self):
+        # Guardar el estado de cada slot en el inventario
+        slots_estado = [{'id': slot['id'], 'cantidad': slot['cantidad']} for slot in self.slots]
+        return slots_estado
+
+    def cargar(self, estado):
+        # Cargar el estado de cada slot desde los datos guardados
+        for i, slot_estado in enumerate(estado):
+            self.slots[i]['id'] = slot_estado['id']
+            self.slots[i]['cantidad'] = slot_estado['cantidad']

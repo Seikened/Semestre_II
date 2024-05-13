@@ -1,9 +1,11 @@
 import time
+import pygame
 
 class Finanzas:
     def __init__(self, saldoaInicial=50):
         self.saldo = saldoaInicial
         self.ultimaVez = time.time()
+        self.fuente = pygame.font.Font(None, 24)  # Define la fuente aquí
 
     def recolectarMonedas(self, ahorros):
         self.saldo += ahorros
@@ -35,5 +37,16 @@ class Finanzas:
             self.ultimaVez = presente  # Actualiza el último tiempo de recompensa
             self.recolectarMonedas(1)  # Añade monedas cada intervalo
     
-    def obtenerSaldo(self):
-        return self.saldo
+    def renderizarSaldo(self, pantalla):
+            textoSaldo = f"Saldo Actual: {int(self.saldo)} monedas"
+            superficieTexto = self.fuente.render(textoSaldo, True, (255, 255, 255))
+            pantalla.blit(superficieTexto, (10, 10))
+    
+    def guardar(self):
+        # Guarda el saldo actual y la última vez que se modificó
+        return {'saldo': self.saldo, 'ultimaVez': self.ultimaVez}
+
+    def cargar(self, data):
+        # Carga el saldo y la última vez que se modificó
+        self.saldo = data['saldo']
+        self.ultimaVez = data['ultimaVez']
