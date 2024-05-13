@@ -158,22 +158,25 @@ class Maceta(SpriteArrastrable):
         return super().Dibujar(pantalla)
     
     def guardar(self):
-        # Guardar el estado básico de la maceta
         estado = {
             'tipoMaceta': self.tipoMaceta,
             'posicionHuerto': self.posicionHuerto,
             'contienePlanta': self.contienePlanta,
-            'idMaceta': self.idMaceta
+            'idMaceta': self.idMaceta,
+            # Guardar la posición actual para mantener la coherencia visual
+            'posicionActual': self.posicion
         }
         if self.contienePlanta:
             estado['planta'] = self.planta.guardar()
         return estado
+
 
     def cargar(self, estado):
         self.tipoMaceta = estado['tipoMaceta']
         self.posicionHuerto = estado['posicionHuerto']
         self.contienePlanta = estado['contienePlanta']
         self.idMaceta = estado['idMaceta']
+        self.posicion = estado['posicionActual']
         if self.contienePlanta:
             self.planta = Planta()
             self.planta.cargar(estado['planta'])
@@ -254,7 +257,8 @@ class Planta(SpriteArrastrable):
             'edad': self.edad,
             'salud': self.salud,
             'precio': self.precio,
-            'idPlanta': self.idPlanta
+            'idPlanta': self.idPlanta,
+            'posicionActual': self.posicion
         }
 
     def cargar(self, estado):
@@ -263,6 +267,7 @@ class Planta(SpriteArrastrable):
         self.salud = estado['salud']
         self.precio = estado['precio']
         self.idPlanta = estado['idPlanta']
+        self.posicion = estado['posicionActual']
         self.actualizarSprite()
     
     def actualizarSprite(self):
@@ -434,11 +439,16 @@ class Huerto:
         return {'macetas': macetas_estado}
 
     def cargar(self, estado):
+        self.espacios = [[None for _ in range(self.columnas)] for _ in range(self.filas)]
         self.macetas = []
-        for maceta_estado in estado['macetas']:
+        for maceta_estado in estado.get('macetas', []):
             maceta = Maceta()
             maceta.cargar(maceta_estado)
             self.agregarMaceta(maceta)
+            if 'planta' in maceta_estado:
+                planta = Planta()
+                planta.cargar(maceta_estado['planta'])
+                maceta.plantarPlanta(planta)
 
 
 
