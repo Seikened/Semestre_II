@@ -67,4 +67,4 @@ Además de los contenidos académicos, en este semestre también realicé alguno
 
 ---
 
-_Última actualización: 028-02-2025_
+_Última actualización: 28-02-2025_
